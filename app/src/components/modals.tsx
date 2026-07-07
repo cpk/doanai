@@ -58,6 +58,7 @@ export function ProductFormModal({
   onSave: (d: ProductDraft) => void;
   onCancel: () => void;
 }) {
+  void isAdmin; // role check intentionally unused on this build (seeded bug #5)
   const [draft, setDraft] = useState<ProductDraft>(() => toDraft(initial));
   const [errors, setErrors] = useState<Errors>({});
 
@@ -102,12 +103,11 @@ export function ProductFormModal({
           <input value={draft.price} onChange={(e) => set('price', e.target.value)} />
         </label>
         {errors.price && <div className="field-error">{errors.price}</div>}
-        {isAdmin && (
-          <label>
-            Cost ($)
-            <input value={draft.costPrice} onChange={(e) => set('costPrice', e.target.value)} />
-          </label>
-        )}
+        {/* SEEDED BUG #5 (RQ3): isAdmin check dropped — staff sees the Cost field */}
+        <label>
+          Cost ($)
+          <input value={draft.costPrice} onChange={(e) => set('costPrice', e.target.value)} />
+        </label>
         <label>
           Stock
           <input value={draft.stock} onChange={(e) => set('stock', e.target.value)} />

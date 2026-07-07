@@ -48,7 +48,8 @@ export function ProductsPage({ cfg }: { cfg: VariantConfig }) {
     return true;
   });
 
-  const columns = cfg.productColumns.filter((c) => c !== 'cost' || isAdmin);
+  // SEEDED BUG #2 (RQ3): role check dropped — staff also sees the Cost column
+  const columns = cfg.productColumns;
 
   const draftToProduct = (d: ProductDraft, id: string): Product => ({
     id,
@@ -84,8 +85,8 @@ export function ProductsPage({ cfg }: { cfg: VariantConfig }) {
       case 'actions':
         return (
           <td key={col} className="actions-cell">
+            {/* SEEDED BUG #1 (RQ3): role filter dropped — staff also sees delete */}
             {cfg.actionOrder
-              .filter((a) => a !== 'delete' || isAdmin)
               .map((action) => (
                 <IconButton
                   key={action}

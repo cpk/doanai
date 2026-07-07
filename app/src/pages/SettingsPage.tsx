@@ -9,14 +9,8 @@ export function SettingsPage() {
   const [settings, setSettings] = useState<Settings>(loadSettings);
   const [saved, setSaved] = useState(false);
 
-  if (session?.role !== 'admin') {
-    return (
-      <div className="denied">
-        <h2>403 — Access denied</h2>
-        <p>Your role does not have permission to view this page.</p>
-      </div>
-    );
-  }
+  // SEEDED BUG #4 (RQ3): access guard dropped — staff can open the settings form
+  void session;
 
   const set = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     setSettings((s) => ({ ...s, [key]: value }));

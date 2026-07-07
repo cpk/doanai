@@ -19,7 +19,8 @@ export function Layout({ cfg, children }: { cfg: VariantConfig; children: ReactN
       <nav className="nav">
         <div className="brand">{cfg.labels.appTitle}</div>
         <div className="nav-links">
-          {NAV_ITEMS.filter((item) => !item.adminOnly || session?.role === 'admin').map((item) => (
+          {/* SEEDED BUG #3 (RQ3): adminOnly filter dropped — staff sees Settings */}
+          {NAV_ITEMS.map((item) => (
             <a
               key={item.path}
               href={item.path}
