@@ -103,7 +103,7 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
   - Repo + scaffold app ✔ (dev server đã xác minh chạy); pilot script + fixture Midscene ✔
   - Chốt model Qwen3-VL + bảng chi phí (~$3-10, dưới xa ngân sách $50) ✔ (`docs/pilot-model-cost.md`)
   - ⏳ Chờ user: API key (OpenRouter) để chạy pilot thật + ghim model ID snapshot (cần trước GĐ3)
-  - Push GitHub: user chủ động yêu cầu sau — hiện chỉ commit local, KHÔNG tự push
+  - Push GitHub: ✔ đã push lên `https://github.com/cpk/doanai` (private) ngày 07/07 — gồm `master`, tag `app-v1.0`, branch `rq3-seeded-bugs`; chuyển public khi bảo vệ
   - 📖 Việc tự đọc của sinh viên: đọc kỹ full-text 4 bài ⭐ (notes đã có sẵn khung)
 - [x] GĐ2: App + baseline (27/07) — **hoàn thành 07/07, tag `app-v1.0`**
   - App "Mini Shop Manager" đủ 4 nhóm chức năng + login Admin/Staff + trang PII giả ✔
@@ -112,6 +112,12 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
   - Chạy trên biến thể: `APP_VARIANT=v1 npx playwright test` (helper `appUrl()` tự gắn query param)
   - ⚠️ Môi trường: đã nâng Node 18.8 → **24 LTS** (winget) vì Playwright 1.61 không load được config TS trên Node < 18.19
   - App freeze từ tag `app-v1.0`; thay đổi sau này chỉ ở biến thể/seeded-bug build (GĐ3)
-- [ ] GĐ3: VLM suite + RQ3/RQ4 (24/08)
+- [~] GĐ3: VLM suite + RQ3/RQ4 (24/08) — **mã nguồn hoàn thành 07/07, chờ API key để chạy VLM thật**
+  - 18 test Midscene.js (NL) đối xứng 1-1 baseline + pilot viết lại theo app mới ✔ (compile sạch, `--list` 27 test)
+  - RBAC (RQ3): 8 kịch bản × 2 phương pháp; branch `rq3-seeded-bugs` cấy 5 lỗi phân quyền — locator suite: clean build 8/8 pass, seeded build phát hiện 5/5 (R1–R5 fail đúng thiết kế) ✔
+  - Masking (RQ4): `masking/` capture → 40 mô tả grounding + ground-truth box tự trích; mask blur/pixelate bằng sharp (đã kiểm tra trực quan); `benchmark.mjs` gọi VLM đo hit-rate/IoU (viết xong, cần key) ✔
+  - Harness: `harness/run-matrix.mjs` chạy {method}×{variant}×{repeat} → `results/raw/matrix-runs.csv`; self-test locator×{v0,v2}×2 OK (v0 18/18, v2 9/18 — gãy deterministic) ✔
+  - ⏳ Chờ API key: chạy pilot → ghim model ID; chạy xanh VLM suite trên V0; bổ sung đếm token/cost từ report Midscene vào harness (cần thấy format report thật)
+- [ ] GĐ3 (phần chạy thật): VLM suite xanh trên V0 + benchmark RQ4 + RBAC VLM trên seeded build
 - [ ] GĐ4: Thực nghiệm + phân tích (07/09)
 - [ ] GĐ5: Báo cáo + slide + repo public (20/09)

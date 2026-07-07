@@ -27,7 +27,19 @@ cd tests-locator && npm install && npx playwright test
 
 # Pilot VLM (cần .env — xem tests-vlm/.env.example)
 cd tests-vlm && npm install && npm run pilot
+# Suite VLM đầy đủ (18 test NL + 8 RBAC):
+cd tests-vlm && npx playwright test tests
+
+# Ma trận thực nghiệm → results/raw/matrix-runs.csv
+cd harness && node run-matrix.mjs --methods locator,vlm --variants v0,v1,v2,v3 --repeats 5
+
+# RQ4: chụp màn hình + tạo bản che PII + benchmark grounding
+cd masking && npm install && npm run capture && npm run mask && npm run benchmark
 ```
+
+## RQ3 — seeded bugs
+
+Branch `rq3-seeded-bugs` chứa 5 lỗi phân quyền cố ý (staff thấy nút Delete, cột Cost, mục Settings, form Settings, trường Cost trong form). Đo tỉ lệ phát hiện: checkout branch và chạy `npx playwright test tests/rbac` ở từng suite — trên build sạch 8/8 pass; trên build lỗi, mỗi test fail = một lỗi được phát hiện (kỳ vọng R1–R5 fail).
 
 ## Ứng dụng thực nghiệm & bộ test baseline
 
@@ -36,3 +48,5 @@ cd tests-vlm && npm install && npm run pilot
 - **18 test case baseline** chia 4 nhóm (A form ×5, B tìm kiếm/lọc ×4, C CRUD ×4, D thành phần tùy biến ×5) + 4 smoke test biến thể. Selector cố ý dùng CSS/XPath cấu trúc (nth-child, text khớp chính xác) — xem `KeHoach_DoAn.md` §2.
 
 Kế hoạch chi tiết: `KeHoach_DoAn.md`. Yêu cầu: Node.js >= 20 (đã kiểm chứng trên Node 24 LTS; Playwright 1.61 không chạy với Node < 18.19).
+
+**Setup máy mới + trạng thái hiện tại + việc tiếp theo: xem `docs/setup-new-machine.md`.**

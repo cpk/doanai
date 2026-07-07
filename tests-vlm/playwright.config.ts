@@ -6,12 +6,19 @@ dotenv.config();
 // VLM-based suite (Midscene.js). Requires .env with MIDSCENE_MODEL_* variables.
 // IMPORTANT for the experiment: never enable MIDSCENE_CACHE (it would distort
 // flakiness measurements); keep workers=1 so API latency numbers are clean.
+// When the experiment harness sets HARNESS_JSON, also emit machine-readable results.
+const reporter: Array<[string] | [string, unknown]> = [
+  ['list'],
+  ['@midscene/web/playwright-reporter', { type: 'merged' }],
+];
+if (process.env.HARNESS_JSON) reporter.push(['json', { outputFile: process.env.HARNESS_JSON }]);
+
 export default defineConfig({
   testDir: '.',
   timeout: 180_000,
   fullyParallel: false,
   workers: 1,
-  reporter: [['list'], ['@midscene/web/playwright-reporter', { type: 'merged' }]],
+  reporter,
   use: {
     baseURL: 'http://localhost:5173',
     viewport: { width: 1280, height: 800 },

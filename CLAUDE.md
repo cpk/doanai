@@ -41,16 +41,19 @@ Sản phẩm cam kết gồm cả mã nguồn công khai (app mẫu, hai bộ te
 
 ## Current State & Repository Structure
 
-Repo đã init git (GĐ1+GĐ2 xong 07/07/2026, tag `app-v1.0`, chưa có remote — KHÔNG tự push, chờ user yêu cầu). Cấu trúc: `app/` (Vite + React + TS — app "Mini Shop Manager" hoàn chỉnh + 4 biến thể), `tests-locator/` (Playwright baseline — 18 test 4 nhóm + 4 smoke biến thể, xanh 100% trên V0), `tests-vlm/` (Midscene.js v1.10.3 + pilot), `masking/`, `harness/`, `results/` (screenshot biến thể), `docs/` (đề cương, hướng dẫn GVHD, `notes-papers.md` — ghi chú 15 bài đã xác minh, `pilot-model-cost.md` — quyết định model + chi phí).
+Repo đã init git (GĐ1+GĐ2 xong 07/07/2026, tag `app-v1.0`); remote `origin` = `https://github.com/cpk/doanai` (private, chuyển public khi bảo vệ) — push khi hoàn thành mốc công việc. `gh` CLI đã cài (đăng nhập tài khoản `cpk`). Cấu trúc: `app/` (Vite + React + TS — app "Mini Shop Manager" hoàn chỉnh + 4 biến thể), `tests-locator/` (Playwright baseline — 18 test 4 nhóm + 4 smoke biến thể, xanh 100% trên V0), `tests-vlm/` (Midscene.js v1.10.3 + pilot), `masking/`, `harness/`, `results/` (screenshot biến thể), `docs/` (đề cương, hướng dẫn GVHD, `notes-papers.md` — ghi chú 15 bài đã xác minh, `pilot-model-cost.md` — quyết định model + chi phí).
 
 App chi tiết: login giả lập `admin/admin123` (thấy thêm nút Delete, trang Settings, cột Cost) và `staff/staff123`; trang `/customers/:id` chứa PII giả (mục tiêu masking RQ4); biến thể `?variant=v0..v3` chỉ đổi trình bày (V1 dark theme, V2 topbar + đảo cột/nút, V3 đổi icon + nhãn), cấu hình tập trung tại `app/src/variants.ts`. **App đã freeze tại tag `app-v1.0`** — không sửa logic app; thay đổi mới chỉ qua biến thể hoặc build seeded-bugs riêng (GĐ3/RQ3).
 
 Commands:
 - App: `cd app && npm run dev` → http://localhost:5173
 - Test baseline: `cd tests-locator && npx playwright test` (tự khởi động app qua webServer; chạy trên biến thể: đặt env `APP_VARIANT=v1|v2|v3`)
-- Test VLM/pilot: `cd tests-vlm && npm run pilot` (cần `.env` theo `.env.example`; app phải đang chạy)
+- Test VLM/pilot: `cd tests-vlm && npm run pilot` (cần `.env` theo `.env.example`); suite chính + RBAC: `npx playwright test tests`
+- Ma trận thực nghiệm: `cd harness && node run-matrix.mjs --methods locator,vlm --variants v0,v1,v2,v3 --repeats 5 [--suite main|rbac]` → append `results/raw/matrix-runs.csv`
+- RQ4 masking: `cd masking && npm run capture && npm run mask` (cần app chạy); `npm run benchmark` gọi VLM (cần key)
+- RQ3 seeded bugs: branch `rq3-seeded-bugs` (5 lỗi phân quyền cố ý; master luôn sạch). Chạy detection: checkout branch rồi chạy suite rbac; RBAC pass 8/8 trên master, R1–R5 phải fail trên branch.
 
-Quyết định kỹ thuật đã chốt (GĐ1): model VLM = **Qwen3-VL** (`MIDSCENE_MODEL_FAMILY=qwen3-vl`); GPT-4o/Claude bị loại (docs Midscene: GPT kém UI grounding, Claude không hỗ trợ). Cấu hình qua bộ biến `MIDSCENE_MODEL_*` (không dùng `OPENAI_API_KEY` cũ). **Không bật `MIDSCENE_CACHE`** khi chạy thực nghiệm — làm sai lệch đo flakiness. Môi trường: Node 24 LTS (nâng từ 18.8 ngày 07/07 vì Playwright 1.61 không load config TS trên Node < 18.19), Python qua `py`, không có `gh` CLI.
+Quyết định kỹ thuật đã chốt (GĐ1): model VLM = **Qwen3-VL** (`MIDSCENE_MODEL_FAMILY=qwen3-vl`); GPT-4o/Claude bị loại (docs Midscene: GPT kém UI grounding, Claude không hỗ trợ). Cấu hình qua bộ biến `MIDSCENE_MODEL_*` (không dùng `OPENAI_API_KEY` cũ). **Không bật `MIDSCENE_CACHE`** khi chạy thực nghiệm — làm sai lệch đo flakiness. Môi trường: Node 24 LTS (nâng từ 18.8 ngày 07/07 vì Playwright 1.61 không load config TS trên Node < 18.19), Python qua `py`; `gh` CLI đã cài.
 
 ## Key References
 
