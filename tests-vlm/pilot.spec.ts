@@ -1,14 +1,24 @@
 import { test } from './fixture';
 
-// Pilot GĐ1: xác nhận Midscene + model đã cấu hình hoạt động end-to-end.
-// Yêu cầu: app dev server đang chạy (cd ../app && npm run dev) và .env đã có API key.
-test('pilot: VLM thao tác được trang Vite mặc định', async ({ page, ai, aiAssert }) => {
-  await page.goto('http://localhost:5173');
+// Pilot: xác nhận Midscene + model đã cấu hình hoạt động end-to-end trên app
+// thực nghiệm (đăng nhập bằng ngôn ngữ tự nhiên). Yêu cầu: .env đã có API key.
+// Sau lần chạy thành công đầu tiên: ghim model ID snapshot + token/call vào
+// docs/pilot-model-cost.md.
+test('pilot: VLM đăng nhập và đọc được bảng sản phẩm', async ({
+  page,
+  aiInput,
+  aiTap,
+  aiAssert,
+  aiNumber,
+}) => {
+  await page.goto('/login');
   await page.waitForLoadState('networkidle');
 
-  await ai('Click the button that shows a count');
-  await aiAssert('The button label now shows "count is 1"');
+  await aiInput('the username field of the sign-in form', { value: 'admin' });
+  await aiInput('the password field of the sign-in form', { value: 'admin123' });
+  await aiTap('the button that submits the sign-in form');
 
-  await ai('Click the same count button two more times');
-  await aiAssert('The button label now shows "count is 3"');
+  await aiAssert('a page titled "Products" with a table of products is visible');
+  const rows = await aiNumber('how many product rows does the table contain?');
+  console.log(`[pilot] VLM counted ${rows} product rows (expected 12)`);
 });
