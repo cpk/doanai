@@ -103,7 +103,7 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
   - Repo + scaffold app ✔ (dev server đã xác minh chạy); pilot script + fixture Midscene ✔
   - Chốt model Qwen3-VL + bảng chi phí (~$3-10, dưới xa ngân sách $50) ✔ (`docs/pilot-model-cost.md`)
   - ⏳ Chờ user: API key (OpenRouter) để chạy pilot thật + ghim model ID snapshot (cần trước GĐ3)
-  - Push GitHub: user chủ động yêu cầu sau — hiện chỉ commit local, KHÔNG tự push
+  - Push GitHub: ✔ đã push lên `https://github.com/cpk/doanai` (private) ngày 07/07 — gồm `master`, tag `app-v1.0`, branch `rq3-seeded-bugs`; chuyển public khi bảo vệ
   - 📖 Việc tự đọc của sinh viên: đọc kỹ full-text 4 bài ⭐ (notes đã có sẵn khung)
 - [x] GĐ2: App + baseline (27/07) — **hoàn thành 07/07, tag `app-v1.0`**
   - App "Mini Shop Manager" đủ 4 nhóm chức năng + login Admin/Staff + trang PII giả ✔
