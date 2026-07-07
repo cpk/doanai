@@ -1,0 +1,9 @@
+{
+  "name": "tests-locator",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Locator-based baseline GUI test suite (Playwright)",
+  "scripts": {
+    "test": "playwright test"
+  }
+}
