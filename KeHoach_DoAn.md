@@ -102,9 +102,16 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
   - Ghi chú 15/15 bài ✔ (`docs/notes-papers.md`; đính chính: ITeM là ISSTA'25, VETL arXiv 2410.12157, VisionDroid→Trident)
   - Repo + scaffold app ✔ (dev server đã xác minh chạy); pilot script + fixture Midscene ✔
   - Chốt model Qwen3-VL + bảng chi phí (~$3-10, dưới xa ngân sách $50) ✔ (`docs/pilot-model-cost.md`)
-  - ⏳ Chờ user: API key (OpenRouter) để chạy pilot thật + ghim model ID snapshot; cài `gh` hoặc tạo remote để push GitHub
+  - ⏳ Chờ user: API key (OpenRouter) để chạy pilot thật + ghim model ID snapshot (cần trước GĐ3)
+  - Push GitHub: user chủ động yêu cầu sau — hiện chỉ commit local, KHÔNG tự push
   - 📖 Việc tự đọc của sinh viên: đọc kỹ full-text 4 bài ⭐ (notes đã có sẵn khung)
-- [ ] GĐ2: App + baseline (27/07) — mốc cứng `app-v1.0`
+- [x] GĐ2: App + baseline (27/07) — **hoàn thành 07/07, tag `app-v1.0`**
+  - App "Mini Shop Manager" đủ 4 nhóm chức năng + login Admin/Staff + trang PII giả ✔
+  - 4 biến thể V0–V3 qua `?variant=` (giữ nguyên khi điều hướng) ✔ — screenshot tại `results/screenshots-app-v1/`
+  - 18 test Playwright baseline (A:5 form, B:4 list/search, C:4 CRUD, D:5 custom widget) + 4 smoke test biến thể — **22/22 pass trên V0, 3 lần chạy liên tiếp không flaky** ✔
+  - Chạy trên biến thể: `APP_VARIANT=v1 npx playwright test` (helper `appUrl()` tự gắn query param)
+  - ⚠️ Môi trường: đã nâng Node 18.8 → **24 LTS** (winget) vì Playwright 1.61 không load được config TS trên Node < 18.19
+  - App freeze từ tag `app-v1.0`; thay đổi sau này chỉ ở biến thể/seeded-bug build (GĐ3)
 - [ ] GĐ3: VLM suite + RQ3/RQ4 (24/08)
 - [ ] GĐ4: Thực nghiệm + phân tích (07/09)
 - [ ] GĐ5: Báo cáo + slide + repo public (20/09)
