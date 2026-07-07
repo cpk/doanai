@@ -27,7 +27,7 @@ Bám đúng **5 Contribution** GVHD đã chốt ở Step 4:
 - **App mẫu**: React + Vite + TypeScript, SPA "quản lý cửa hàng mini" — đủ 4 nhóm chức năng: form nhập liệu (thêm/sửa sản phẩm), danh sách + tìm kiếm/lọc, CRUD, và **thành phần tùy biến không nhãn ngữ nghĩa** (icon-button vẽ SVG không aria-label, rating stars, canvas widget). Có **màn hồ sơ khách hàng chứa PII giả** (tên, SĐT, email, số thẻ mock) phục vụ RQ4. **Login giả lập 2 vai trò** Admin/Staff (Admin thấy thêm: nút Delete, trang Settings, cột giá vốn) phục vụ RQ3. Không backend thật — mock data JSON + localStorage.
 - **Biến thể giao diện** (điều khiển bằng query param/env `?variant=`): `V0` gốc → `V1` đổi theme màu + dark mode; `V2` đổi bố cục (sidebar→topbar, đổi vị trí nút, đổi thứ tự cột); `V3` đổi biểu tượng + nhãn (icon khác, đổi text nút "Add"→"Create", đổi placeholder). Mỗi biến thể là 1 nhánh CSS/config, **không đổi logic** — đảm bảo "controlled UI variants" như GVHD yêu cầu.
 - **Baseline**: Playwright Test (TypeScript), selector kiểu CSS/XPath cố định (cố ý KHÔNG dùng getByRole/text-based để phản ánh đúng "locator brittleness" — ghi rõ lựa chọn này trong báo cáo, kèm 1 phụ lục thảo luận nếu dùng locator tốt nhất thì sao).
-- **VLM**: Midscene.js tích hợp Playwright. Model chính chọn sau **pilot tuần 1** (ứng viên: GPT-4o, Qwen2.5-VL API, UI-TARS) theo tiêu chí độ chính xác grounding + giá; **ghim model ID** từ đó đến hết. Fallback: Qwen2.5-VL chạy cục bộ.
+- **VLM**: Midscene.js v1.10.3 tích hợp Playwright. **Đã chốt (GĐ1, 07/07): model chính = Qwen3-VL** (`MIDSCENE_MODEL_FAMILY=qwen3-vl`, qua OpenRouter/DashScope) — GPT-4o bị docs Midscene đánh giá kém về UI grounding, Claude không được hỗ trợ; xem `docs/pilot-model-cost.md`. Model ID snapshot ghim sau pilot chạy thật (chờ API key). Fallback/so sánh phụ: UI-TARS-1.5; dự phòng bảo mật: Qwen-VL self-host.
 - **Harness đo**: Node script chạy matrix `{2 phương pháp} × {V0..V3} × {n=5 lần lặp}`, ghi JSON/CSV: pass/fail, thời gian, token in/out, cost ước tính. Biểu đồ vẽ bằng Python (matplotlib) từ CSV.
 - **RQ4 đo bằng grounding benchmark riêng** (không sửa lõi Midscene): script chụp screenshot các màn hình chính → tạo bản masked (blur/pixelate vùng PII theo tọa độ biết trước bằng `sharp`) → gọi VLM yêu cầu trả tọa độ phần tử theo 30–50 mô tả ngôn ngữ tự nhiên → so IoU/hit-rate giữa ảnh gốc và ảnh masked.
 - **Quy trình đo maintenance cost (RQ2)**: với mỗi biến thể V1–V3, sửa từng bộ test đến khi pass lại toàn bộ; đếm (a) số test case phải sửa, (b) diff LOC (git diff --stat), (c) thời gian sửa (ghi log). Cùng một người sửa, sửa baseline trước VLM sau, theo checklist thống nhất.
@@ -98,7 +98,12 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
 
 ## 7. Trạng thái (cập nhật hàng tuần)
 
-- [ ] GĐ1: Nghiên cứu + pilot (13/07)
+- [x] GĐ1: Nghiên cứu + pilot (13/07) — **hoàn thành 07/07** trừ 2 việc chờ người dùng:
+  - Ghi chú 15/15 bài ✔ (`docs/notes-papers.md`; đính chính: ITeM là ISSTA'25, VETL arXiv 2410.12157, VisionDroid→Trident)
+  - Repo + scaffold app ✔ (dev server đã xác minh chạy); pilot script + fixture Midscene ✔
+  - Chốt model Qwen3-VL + bảng chi phí (~$3-10, dưới xa ngân sách $50) ✔ (`docs/pilot-model-cost.md`)
+  - ⏳ Chờ user: API key (OpenRouter) để chạy pilot thật + ghim model ID snapshot; cài `gh` hoặc tạo remote để push GitHub
+  - 📖 Việc tự đọc của sinh viên: đọc kỹ full-text 4 bài ⭐ (notes đã có sẵn khung)
 - [ ] GĐ2: App + baseline (27/07) — mốc cứng `app-v1.0`
 - [ ] GĐ3: VLM suite + RQ3/RQ4 (24/08)
 - [ ] GĐ4: Thực nghiệm + phân tích (07/09)

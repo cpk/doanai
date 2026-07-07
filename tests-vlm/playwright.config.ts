@@ -8,7 +8,7 @@ export default defineConfig({
   timeout: 180_000,
   fullyParallel: false,
   workers: 1,
-  reporter: [['list']],
+  reporter: [['list'], ['@midscene/web/playwright-reporter', { type: 'merged' }]],
   use: {
     viewport: { width: 1280, height: 800 },
   },

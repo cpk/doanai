@@ -67,3 +67,60 @@
 - **Result**: Kết quả thực nghiệm cho thấy ngay cả các model tiên tiến nhất cũng không làm tốt đồng đều cả 3 subtask, chỉ ra khoảng cách lớn giữa năng lực hiện tại và yêu cầu thực tế.
 - **Limitation**: Tập trung vào mobile app; chưa bao phủ web GUI và các yếu tố chi phí/độ ổn định khi chạy lặp lại.
 - **Liên quan đồ án**: Ý tưởng inject defect/biến thể có kiểm soát vào app để đo năng lực phát hiện của VLM chính là phương pháp luận đồ án dùng khi tạo các biến thể giao diện web để đo robustness của Playwright vs Midscene.js.
+
+
+### 9. Temac: Multi-Agent Collaboration for Automated Web GUI Testing
+- **Nguồn**: Chenxu Liu (Peking University; đồng tác giả Tao Xie) — arXiv: 2506.00520, 2025 (preprint).
+- **Problem**: Kiểm thử GUI web tự động khó sinh chuỗi hành động liên tục, có ý nghĩa để khám phá sâu các chức năng phức tạp; LLM đơn lẻ kém hiệu quả và tỷ lệ thực thi GUI task thành công thấp.
+- **Method**: Chiến lược lai hai pha: chạy công cụ kiểm thử truyền thống để khám phá rộng; khi coverage chững lại, các LLM-based agent cộng tác tổng hợp thông tin thành knowledge base, suy luận các chức năng chưa được phủ và điều khiển hành động có mục tiêu tới các state chưa khám phá.
+- **Result**: Cải thiện code coverage trung bình 12,5%–60,3% so với các baseline SOTA trên 6 web app mã nguồn mở; phát hiện 445 unique failure trên 20 web app thực tế.
+- **Limitation**: Preprint chưa qua peer review; chi phí LLM nhiều vòng gọi và tính tái lập chưa được báo cáo chi tiết.
+- **Liên quan đồ án**: Minh họa hướng "LLM bổ trợ công cụ truyền thống" — đúng trục so sánh locator-based vs AI-driven, gợi ý dùng coverage/failure làm metric đối chứng bên cạnh robustness và chi phí API.
+
+### 10. NaviQAte: Functionality-guided Web Application Navigation
+- **Nguồn**: Mobina Shahbandeh et al. (nhóm Mesbah, UBC) — arXiv: 2409.10741, 2024 (preprint).
+- **Problem**: Các approach điều hướng web hiện có (như WebCanvas) đòi hỏi mô tả task rất chi tiết, kém thích ứng với môi trường web động khi chỉ có mô tả chức năng ở mức trừu tượng.
+- **Method**: Tái công thức hóa web exploration thành bài toán Q&A để sinh chuỗi hành động không cần tham số chi tiết; chiến lược 3 pha dùng GPT-4o cho quyết định phức tạp và GPT-4o mini cho task đơn giản, kết hợp đầu vào đa phương thức (text + ảnh).
+- **Result**: Success rate 44,23% cho user task navigation và 38,46% cho functionality navigation, cải thiện 15% và 33% so với WebCanvas.
+- **Limitation**: Success rate tuyệt đối vẫn dưới 50%, cho thấy điều hướng theo chức năng trên web thực tế còn rất khó.
+- **Liên quan đồ án**: Bằng chứng định lượng về mức trần độ tin cậy của tác tử VLM/LLM khi điều hướng web bằng ngôn ngữ tự nhiên — cần lưu ý khi đánh giá Midscene.js so với Playwright script cố định.
+
+### 11. Feature-Driven End-to-End Test Generation (AutoE2E)
+- **Nguồn**: Parsa Alian et al. (UBC) — ICSE 2025 (Research Track). DOI: 10.1109/ICSE55347.2025.00141. arXiv: 2408.01894.
+- **Problem**: Viết test E2E cho web app thủ công tốn công, còn kỹ thuật sinh test tự động hiện có tạo test rời rạc, thiếu ngữ nghĩa theo tính năng.
+- **Method**: AutoE2E dùng LLM suy luận các feature tiềm năng của web app rồi dịch thành test scenario thực thi được; đề xuất benchmark E2EBench đo feature coverage của test suite E2E.
+- **Result**: Feature coverage trung bình 79%, vượt baseline tốt nhất 558% (tương đối).
+- **Limitation**: Giới hạn ở web app; feature coverage 79% cho thấy vẫn bỏ sót ~1/5 tính năng.
+- **Liên quan đồ án**: Gợi ý chiều mở rộng "AI sinh test theo tính năng" và khái niệm feature coverage — có thể dùng làm metric phụ khi so sánh chất lượng test Playwright vs Midscene.js.
+
+### 12. A Study of Using Multimodal LLMs for Non-Crash Functional Bug Detection in Android Apps
+- **Nguồn**: Bangyan Ju et al. — arXiv: 2407.19053, 2024 (preprint).
+- **Problem**: Kiểm thử GUI truyền thống đạt code coverage tốt nhưng thiếu test oracle hiệu quả để phát hiện non-crash functional bug.
+- **Method**: Nghiên cứu thực nghiệm dùng multimodal LLM làm test oracle (tận dụng domain knowledge từ corpus huấn luyện), đánh giá trên 71 non-crash functional bug đã ghi nhận.
+- **Result**: Bug detection rate 49%, vượt các công cụ hiện có; phát hiện thêm 24 bug chưa từng biết trên 64 app Android, 4 bug được developer xác nhận/sửa.
+- **Limitation**: Chính tác giả chỉ ra performance degradation, randomness nội tại và false positive làm giảm độ tin cậy của LLM-as-oracle.
+- **Liên quan đồ án**: Non-determinism và false positive của oracle dựa trên VLM là đúng rủi ro đồ án phải đo khi dùng aiAssert của Midscene.js thay cho assertion cứng của Playwright.
+
+### 13. Intention-based GUI Test Migration for Mobile Apps using Large Language Models (ITeM)
+- **Nguồn**: Shaoheng Cao et al. (Nanjing University) — Proc. ACM Softw. Eng. (PACMSE), **ISSTA 2025** (lưu ý: danh sách GVHD ghi FSE, đã xác minh lại là ISSTA 2025). DOI: 10.1145/3728978.
+- **Problem**: Các approach migrate GUI test giữa các app coi đây là bài toán widget-matching nên thất bại khi interaction logic của cùng chức năng khác nhau giữa các app.
+- **Method**: Framework 2 giai đoạn dựa trên LLM: (1) cơ chế transition-aware sinh test intention từ test nguồn; (2) cơ chế dynamic reasoning hiện thực hóa intention trên app đích.
+- **Result**: Trên 35 app Android với 280 test migration task, vượt các approach SOTA về cả effectiveness lẫn efficiency (số liệu chi tiết trong bản full).
+- **Limitation**: Giới hạn ở app Android, phụ thuộc chất lượng suy luận intention của LLM.
+- **Liên quan đồ án**: Ý tưởng "test theo intention thay vì theo widget/locator" chính là luận điểm lý thuyết cho giả thuyết Midscene.js (mô tả ngôn ngữ tự nhiên) bền vững hơn Playwright locator trước biến thể giao diện — bài sát nhất với khái niệm chi phí bảo trì (RQ2).
+
+### 14. Guardian: A Runtime Framework for LLM-based UI Exploration
+- **Nguồn**: Dezhi Ran et al. (PKU/UTD) — ISSTA 2024. DOI: 10.1145/3650212.3680334.
+- **Problem**: LLM kém trong tuân thủ chặt instruction và re-planning khi khám phá UI theo mục tiêu, làm giảm hiệu quả dù prompt tinh vi.
+- **Method**: Computation offloading: chuyển các phần việc xác định (lọc action không hợp lệ, thu hẹp action space, khôi phục UI state) từ LLM sang chương trình symbolic ở runtime, buộc LLM chỉ plan trên action space đã kiểm soát.
+- **Result**: Với ChatGPT trên benchmark FestiVal (58 task, 23 app): success rate 48,3% và average completion proportion 64,0%, cải thiện tương đối 154% và 132% so với SOTA.
+- **Limitation**: Success rate tuyệt đối vẫn <50%; đánh giá gắn với một LLM trên app Android.
+- **Liên quan đồ án**: Kiến trúc "LLM plan + symbolic program kiểm soát runtime" tương đồng cách Midscene.js tách planning/grounding; gợi ý phân tích lỗi của VLM-agent theo nguyên nhân (planning sai vs grounding sai) khi đo robustness.
+
+### 15. Vision-Based Mobile App GUI Testing: A Survey
+- **Nguồn**: Shengcheng Yu et al. (Nanjing University/ETH) — arXiv: 2310.13518 (10/2023); được nhận đăng tại ACM Computing Surveys, DOI: 10.1145/3773027.
+- **Problem**: Kiểm thử GUI truyền thống dựa trên source code/layout file gặp khoảng cách giữa "cái trích xuất được" và "cái GUI thực sự hiển thị".
+- **Method**: Khảo sát hệ thống 271 bài báo (92 bài thuần vision-based) về GUI test generation, record & replay, testing framework..., phân tích cách computer vision thay thế/bổ sung giải pháp truyền thống.
+- **Result**: Bản đồ tài liệu trước làn sóng LLM, cho thấy vision-based approach dần chiếm vị trí quan trọng và chỉ ra các khoảng trống nghiên cứu.
+- **Limitation**: Hoàn thành trước khi VLM đa phương thức bùng nổ (2023), không phủ các GUI-agent hiện đại như UI-TARS hay Midscene.
+- **Liên quan đồ án**: Nền "related work" giai đoạn pre-LLM để lập luận vì sao vision-based tiến hóa thành VLM-based và vì sao cần so sánh định lượng mới trên web.
