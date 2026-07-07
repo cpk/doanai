@@ -48,7 +48,10 @@ App chi tiết: login giả lập `admin/admin123` (thấy thêm nút Delete, tr
 Commands:
 - App: `cd app && npm run dev` → http://localhost:5173
 - Test baseline: `cd tests-locator && npx playwright test` (tự khởi động app qua webServer; chạy trên biến thể: đặt env `APP_VARIANT=v1|v2|v3`)
-- Test VLM/pilot: `cd tests-vlm && npm run pilot` (cần `.env` theo `.env.example`; app phải đang chạy)
+- Test VLM/pilot: `cd tests-vlm && npm run pilot` (cần `.env` theo `.env.example`); suite chính + RBAC: `npx playwright test tests`
+- Ma trận thực nghiệm: `cd harness && node run-matrix.mjs --methods locator,vlm --variants v0,v1,v2,v3 --repeats 5 [--suite main|rbac]` → append `results/raw/matrix-runs.csv`
+- RQ4 masking: `cd masking && npm run capture && npm run mask` (cần app chạy); `npm run benchmark` gọi VLM (cần key)
+- RQ3 seeded bugs: branch `rq3-seeded-bugs` (5 lỗi phân quyền cố ý; master luôn sạch). Chạy detection: checkout branch rồi chạy suite rbac; RBAC pass 8/8 trên master, R1–R5 phải fail trên branch.
 
 Quyết định kỹ thuật đã chốt (GĐ1): model VLM = **Qwen3-VL** (`MIDSCENE_MODEL_FAMILY=qwen3-vl`); GPT-4o/Claude bị loại (docs Midscene: GPT kém UI grounding, Claude không hỗ trợ). Cấu hình qua bộ biến `MIDSCENE_MODEL_*` (không dùng `OPENAI_API_KEY` cũ). **Không bật `MIDSCENE_CACHE`** khi chạy thực nghiệm — làm sai lệch đo flakiness. Môi trường: Node 24 LTS (nâng từ 18.8 ngày 07/07 vì Playwright 1.61 không load config TS trên Node < 18.19), Python qua `py`, không có `gh` CLI.
 
