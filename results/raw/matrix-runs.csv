@@ -1,1 +1,9 @@
 timestamp,label,method,suite,variant,repeat,test_id,status,duration_ms,run_wall_ms,run_ai_calls,run_prompt_tokens,run_completion_tokens,run_ai_ms,run_cost_usd
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R1,failed,5190,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R2,failed,3273,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R3,failed,7611,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R4,failed,3203,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R5,failed,8808,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R6,passed,7646,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R7,passed,5826,56450,11,22674,746,41246,0.005191
+2026-07-08T13:45:24.713Z,rq3-seeded-vlm-verify,vlm,rbac,v0,1,R8,passed,8478,56450,11,22674,746,41246,0.005191
