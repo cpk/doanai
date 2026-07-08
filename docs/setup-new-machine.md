@@ -18,7 +18,7 @@
 **Còn lại (theo thứ tự):**
 
 1. ✅ (08/07 tối, máy Windows) RBAC VLM trên build lỗi: đã merge master vào `rq3-seeded-bugs` (commit `4daf158`, đã push) rồi chạy qua harness (`--methods vlm --suite rbac --label rq3-seeded-vlm-verify`): **R1–R5 fail đúng thiết kế (phát hiện 5/5), R6–R8 pass**; $0.0052/run. Số liệu nằm trong `results/raw/matrix-runs.csv`.
-2. Benchmark RQ4: `cd masking && npm run benchmark` (KHÔNG cần app chạy — ảnh đã capture sẵn trong `masking/screens/`, tracked trong git; dùng chung `tests-vlm/.env`) — **đang chạy 08/07 tối** (360 call, ~25 phút) → `masking/generated/grounding-results.csv`.
+2. ✅ (08/07 tối) Benchmark RQ4 hoàn tất: hit-rate 100% cả 3 điều kiện, IoU giảm nhẹ trên màn PII (orig 0.737 / blur 0.722 / pixel 0.706 toàn cục), $0.112/360 call → `masking/generated/grounding-results.csv` + `raw-calls.jsonl`. Lưu ý 2 cạm bẫy đã sửa (chuẩn tọa độ 0–1000 của Qwen + item dưới fold): `docs/pilot-model-cost.md` mục 8. Nếu capture lại: cần app chạy (`cd app && npm run dev`), viewport 1280×1100.
 3. ✅ (08/07, máy Windows) Token/cost đã vào harness: `harness/token-log.mjs` parse dòng stats (`model, …, prompt-tokens, N, completion-tokens, N, total-tokens, N, cost-ms, N`) từ **mọi** file `tests-vlm/midscene_run/log/*.log` (bản Mac ghi vào `ai-call.log`, source v1.10.3 dùng topic `ai:profile:stats` → quét cả hai); mỗi run VLM thêm 5 cột `run_ai_calls, run_prompt_tokens, run_completion_tokens, run_ai_ms, run_cost_usd` vào `matrix-runs.csv` (locator để trống). Lần chạy VLM đầu tiên qua harness: kiểm tra cột token có số ≠ 0 (nếu 0 sẽ có WARNING trên console).
 4. Sau đó vào GĐ4: chạy ma trận chính `harness/run-matrix.mjs --methods locator,vlm --variants v0,v1,v2,v3 --repeats 5`.
 
