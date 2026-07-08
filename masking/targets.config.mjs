@@ -5,7 +5,10 @@
 //    ONLY to auto-extract ground-truth boxes; the VLM receives the description text.
 // Total items: 40 (30–50 required by the plan).
 
-export const VIEWPORT = { width: 1280, height: 800 };
+// 1280x1100 = same viewport as tests-locator/tests-vlm configs (symmetric
+// experiment conditions; the full product table fits in one screenshot —
+// with 800px, 3 benchmark items sat below the fold and were unlocatable).
+export const VIEWPORT = { width: 1280, height: 1100 };
 
 export const SCREENS = [
   {

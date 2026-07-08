@@ -8,7 +8,14 @@
 //   hit      — predicted center point falls inside the ground-truth box
 //   dist     — euclidean distance (px) from predicted point to gt box center
 //   iou      — IoU when the model returns a box (0 when point-only)
-// Output: generated/grounding-results.csv (+ raw JSON per call).
+// Output: generated/grounding-results.csv + generated/raw-calls.jsonl (audit).
+//
+// Coordinate convention: Qwen3-VL grounding answers in 0-1000 normalized
+// coordinates regardless of pixel instructions (verified 2026-07-08: asked
+// for pixels on a 1280x800 image, it returned boxes that match ground truth
+// exactly after x*W/1000, y*H/1000 scaling). So the prompt asks for the
+// native 0-1000 convention and the harness converts to pixels; answers with
+// any coordinate > 1000 are treated as already-in-pixels as a fallback.
 
 import { readFileSync, writeFileSync, appendFileSync, existsSync } from 'node:fs';
 import dotenv from 'dotenv';
@@ -44,6 +51,61 @@ if (!existsSync(CSV)) {
 const imgPath = (cond, screenId) =>
   cond === 'orig' ? `screens/orig/${screenId}.png` : `screens/masked-${cond}/${screenId}.png`;
 
+const RAW_LOG = 'generated/raw-calls.jsonl';
+
+// PNG IHDR: width/height are big-endian uint32 at byte offsets 16/20.
+function pngSize(buf) {
+  return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20) };
+}
+
+// Accepts the answer shapes Qwen3-VL actually produces:
+//   {"box":[x1,y1,x2,y2]}  |  {"bbox_2d":[...]}  |  {"x":[x1,y1,x2,y2]}
+//   {"x":cx,"y":cy}        |  bare [x1,y1,x2,y2]
+// Returns { cx, cy, box } in PIXELS of the w×h image, or null.
+function parseAnswer(text, w, h) {
+  const cleaned = text.replace(/```(?:json)?/g, '').trim();
+  let obj = null;
+  const jsonMatch = cleaned.match(/\{[\s\S]*?\}/);
+  if (jsonMatch) {
+    try {
+      obj = JSON.parse(jsonMatch[0]);
+    } catch {
+      obj = null;
+    }
+  }
+  let arr = null;
+  let cx = null;
+  let cy = null;
+  if (obj) {
+    const boxLike = [obj.box, obj.bbox_2d, obj.bbox, obj.x].find(
+      (v) => Array.isArray(v) && v.length === 4 && v.every((n) => typeof n === 'number'),
+    );
+    if (boxLike) arr = boxLike;
+    else if (typeof obj.x === 'number' && typeof obj.y === 'number') {
+      cx = obj.x;
+      cy = obj.y;
+    }
+  }
+  if (!arr && cx === null) {
+    // Last resort: first bare [a,b,c,d] group anywhere in the text.
+    const m = cleaned.match(/\[\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\]/);
+    if (m) arr = m.slice(1, 5).map(Number);
+  }
+  if (!arr && cx === null) return null;
+
+  // 0-1000 normalized (Qwen native) unless something exceeds 1000.
+  const vals = arr ?? [cx, cy];
+  const normalized = vals.every((v) => v <= 1000);
+  const sx = normalized ? w / 1000 : 1;
+  const sy = normalized ? h / 1000 : 1;
+  if (arr) {
+    const [x1, y1, x2, y2] = arr;
+    const box = { x: x1 * sx, y: y1 * sy, w: (x2 - x1) * sx, h: (y2 - y1) * sy };
+    return { cx: box.x + box.w / 2, cy: box.y + box.h / 2, box };
+  }
+  return { cx: cx * sx, cy: cy * sy, box: null };
+}
+
 function centerDist(px, py, box) {
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h / 2;
@@ -62,7 +124,7 @@ function iou(a, b) {
   return union > 0 ? inter / union : 0;
 }
 
-async function locate(imageB64, desc) {
+async function locate(imageB64, desc, w, h) {
   const t0 = Date.now();
   const res = await fetch(`${BASE_URL}/chat/completions`, {
     method: 'POST',
@@ -78,10 +140,9 @@ async function locate(imageB64, desc) {
             {
               type: 'text',
               text:
-                `The screenshot is 1280x800 pixels. Locate this element: "${desc}". ` +
-                'Answer with ONLY a JSON object, no prose: ' +
-                '{"x": <center x px>, "y": <center y px>, "box": [x1, y1, x2, y2]} ' +
-                '(box is optional if you are unsure of the extent).',
+                `Locate this element in the screenshot: "${desc}". ` +
+                'Answer with ONLY a JSON object, no prose: {"box": [x1, y1, x2, y2]} ' +
+                'where coordinates are normalized to a 0-1000 scale on both axes.',
             },
           ],
         },
@@ -92,10 +153,8 @@ async function locate(imageB64, desc) {
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const data = await res.json();
   const text = data.choices?.[0]?.message?.content ?? '';
-  const match = text.match(/\{[\s\S]*\}/);
-  const parsed = match ? JSON.parse(match[0]) : null;
   return {
-    parsed,
+    parsed: parseAnswer(text, w, h),
     usage: data.usage ?? {},
     latency,
     raw: text,
@@ -109,27 +168,25 @@ const totalCalls =
 
 for (const cond of CONDITIONS) {
   for (const screen of groundtruth) {
-    const b64 = readFileSync(imgPath(cond, screen.id)).toString('base64');
+    const imgBuf = readFileSync(imgPath(cond, screen.id));
+    const { w, h } = pngSize(imgBuf);
+    const b64 = imgBuf.toString('base64');
     for (const item of screen.items) {
       for (let r = 1; r <= REPEATS; r++) {
         let row;
         try {
-          const { parsed, usage, latency } = await locate(b64, item.desc);
-          if (!parsed || typeof parsed.x !== 'number' || typeof parsed.y !== 'number') {
-            throw new Error('unparseable answer');
-          }
-          const hit = inBox(parsed.x, parsed.y, item.box) ? 1 : 0;
-          const dist = centerDist(parsed.x, parsed.y, item.box).toFixed(1);
-          const predBox = Array.isArray(parsed.box)
-            ? {
-                x: parsed.box[0],
-                y: parsed.box[1],
-                w: parsed.box[2] - parsed.box[0],
-                h: parsed.box[3] - parsed.box[1],
-              }
-            : null;
-          const iouVal = predBox ? iou(predBox, item.box).toFixed(3) : '';
-          row = `${cond},${screen.id},${item.id},${r},${parsed.x},${parsed.y},${hit},${dist},${iouVal},${usage.prompt_tokens ?? ''},${usage.completion_tokens ?? ''},${latency},`;
+          const { parsed, usage, latency, raw } = await locate(b64, item.desc, w, h);
+          appendFileSync(
+            RAW_LOG,
+            JSON.stringify({ cond, screen: screen.id, item: item.id, repeat: r, raw, latency }) + '\n',
+          );
+          if (!parsed) throw new Error('unparseable answer');
+          const px = Math.round(parsed.cx);
+          const py = Math.round(parsed.cy);
+          const hit = inBox(px, py, item.box) ? 1 : 0;
+          const dist = centerDist(px, py, item.box).toFixed(1);
+          const iouVal = parsed.box ? iou(parsed.box, item.box).toFixed(3) : '';
+          row = `${cond},${screen.id},${item.id},${r},${px},${py},${hit},${dist},${iouVal},${usage.prompt_tokens ?? ''},${usage.completion_tokens ?? ''},${latency},`;
         } catch (e) {
           row = `${cond},${screen.id},${item.id},${r},,,,,,,,,"${String(e.message).replaceAll('"', "'")}"`;
         }

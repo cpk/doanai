@@ -90,7 +90,7 @@
         "desc": "the logout button at the bottom of the sidebar",
         "box": {
           "x": 12,
-          "y": 925,
+          "y": 1046,
           "w": 185,
           "h": 38
         }
@@ -440,7 +440,7 @@
         "desc": "the logout button at the bottom of the sidebar",
         "box": {
           "x": 12,
-          "y": 746,
+          "y": 1046,
           "w": 185,
           "h": 38
         }
@@ -458,7 +458,7 @@
         "desc": "the username input field",
         "box": {
           "x": 499,
-          "y": 348,
+          "y": 498,
           "w": 282,
           "h": 36
         }
@@ -468,7 +468,7 @@
         "desc": "the password input field",
         "box": {
           "x": 499,
-          "y": 419,
+          "y": 569,
           "w": 282,
           "h": 36
         }
@@ -478,7 +478,7 @@
         "desc": "the button that submits the sign-in form",
         "box": {
           "x": 499,
-          "y": 471,
+          "y": 621,
           "w": 282,
           "h": 38
         }
@@ -488,7 +488,7 @@
         "desc": "the application title on the sign-in card",
         "box": {
           "x": 499,
-          "y": 246,
+          "y": 396,
           "w": 282,
           "h": 38
         }
@@ -498,7 +498,7 @@
         "desc": "the demo accounts hint text at the bottom of the card",
         "box": {
           "x": 499,
-          "y": 523,
+          "y": 673,
           "w": 282,
           "h": 19
         }

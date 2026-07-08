@@ -100,3 +100,14 @@ Lần chạy VLM suite đầu tiên trên V0 cho 19/27 (RBAC 8/8 xanh; 8 test ma
 - Khác biệt bản chất giữa hai phương pháp: **locator truy vấn DOM (toàn trang), VLM truy vấn ảnh chụp (chỉ phần nhìn thấy)**. Mọi phép đo dạng "đếm/kiểm tra toàn cục" bằng VLM đều ngầm giả định nội dung lọt trọn viewport.
 - Kích thước viewport là **biến nhiễu (confounder)** của thực nghiệm so sánh — phải cố định và báo cáo tường minh; kết quả VLM không khái quát sang trang dài hơn viewport nếu không có cơ chế cuộn + tổng hợp.
 - Fail do viewport là **deterministic** ở temperature=0 — nếu không chẩn đoán, dễ quy nhầm thành "VLM không chính xác" thay vì "VLM không nhìn thấy"; ảnh hưởng cách diễn giải pass rate ở RQ1.
+
+## 8. Phát hiện phương pháp luận: Qwen3-VL grounding trả tọa độ chuẩn hóa 0–1000 (08/07/2026, benchmark RQ4)
+
+Lần chạy benchmark RQ4 đầu tiên (360 call) cho kết quả 340/360 "lỗi" — chẩn đoán cho thấy **VLM định vị đúng nhưng harness chấm sai**, hai nguyên nhân:
+
+1. **Chuẩn tọa độ:** prompt yêu cầu tọa độ pixel trên ảnh 1280×800, nhưng Qwen3-VL **luôn trả tọa độ chuẩn hóa 0–1000** theo quy ước grounding gốc của nó (và thường đặt box trong khóa `"x"` thay vì tâm điểm). Bằng chứng: box model trả `[186,84,371,130]` × (1280/1000, 800/1000) = `[238,67,475,104]` — trùng gần như tuyệt đối ground-truth `[236,68,476,104]`. → Sửa: prompt yêu cầu thẳng format 0–1000 (quy ước gốc của model), harness quy đổi về pixel; parser chấp nhận các shape `box`/`bbox_2d`/`x`-là-mảng; lưu raw answer vào `generated/raw-calls.jsonl` để audit.
+2. **3/40 item nằm dưới fold:** capture cũ dùng viewport 1280×800 nhưng `boundingBox()` trả tọa độ trang → `logout-button`, `row12-rating`, `table-footer` (y>880) không có trong ảnh — nhất quán với phát hiện "viewport-bound perception" ở mục 7. → Sửa: viewport capture nâng lên **1280×1100** (đồng bộ với 2 test suite).
+
+Sau khi sửa, smoke-run 40 call trên ảnh gốc: **0 lỗi parse, hit-rate 100%**.
+
+**Ý nghĩa cho báo cáo:** (a) khi tích hợp VLM grounding, quy ước tọa độ của model **thắng** chỉ dẫn trong prompt — pipeline phải theo quy ước của model, không ngược lại (đây chính là việc Midscene làm nội bộ qua `MIDSCENE_MODEL_FAMILY=qwen3-vl`); (b) mọi phép đo grounding accuracy phụ thuộc vào parser — "lỗi model" và "lỗi harness" phải tách bạch trước khi kết luận (Threats to Validity); (c) kết quả attempt 1 lưu tại `masking/generated/grounding-results-invalid-attempt1.csv` làm tư liệu.
