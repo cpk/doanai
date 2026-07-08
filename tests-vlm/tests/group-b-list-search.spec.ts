@@ -51,6 +51,7 @@ test('B4: a search with no matches shows the empty state, clearing restores all 
   await gotoProducts(page);
   await aiInput('the search box above the product table', { value: 'zzz-nothing' });
   await aiAssert('the table shows a message that no products match the current filters');
-  await aiInput('the search box above the product table', { value: '' });
+  // mode 'clear' is required: an empty value alone does not clear the field.
+  await aiInput('the search box above the product table', { value: '', mode: 'clear' });
   expect(await aiNumber('how many product rows does the table contain?')).toBe(12);
 });

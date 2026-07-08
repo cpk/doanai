@@ -4,7 +4,9 @@
 
 ## 1. Quyết định model
 
-**Model chính (chốt): Qwen3-VL** (`MIDSCENE_MODEL_FAMILY=qwen3-vl`), truy cập qua OpenRouter (`qwen/qwen3-vl-plus`) hoặc DashScope international. Model ID chính xác (bản snapshot) sẽ ghim sau lần pilot chạy thật đầu tiên và ghi vào đây + báo cáo.
+**Model chính (chốt + đã ghim sau pilot thật 08/07/2026): `qwen/qwen3-vl-235b-a22b-instruct`** (`MIDSCENE_MODEL_FAMILY=qwen3-vl`), truy cập qua OpenRouter. Đây là bản snapshot cố định dùng suốt thực nghiệm.
+
+> Đính chính so với dự kiến GĐ1: OpenRouter **không** có `qwen/qwen3-vl-plus` (bản proprietary chỉ tồn tại trên Alibaba DashScope). Danh sách open-weight Qwen3-VL trên OpenRouter gồm các bản 8B/30B-A3B/32B/235B-A22B (instruct & thinking). Đã chọn bản flagship **235B-A22B instruct** để ưu tiên độ chính xác grounding (mục tiêu cốt lõi của đề tài); bản non-thinking để đo flakiness sạch. Xem mục 6.
 
 Căn cứ:
 - Docs Midscene xếp Qwen3-VL trong nhóm khuyến nghị mặc định (visual grounding tốt, vượt Qwen2.5-VL).
@@ -58,7 +60,43 @@ Giả định (xác nhận lại bằng pilot): mỗi call Midscene gửi 1 scre
 
 ## 5. Việc còn lại để đóng pilot (cần người dùng)
 
-1. Tạo API key (khuyến nghị OpenRouter: https://openrouter.ai — nạp tối thiểu $5).
-2. `cd tests-vlm && copy .env.example .env` → điền `MIDSCENE_MODEL_API_KEY`.
-3. Chạy app (`cd app && npm run dev`) rồi `cd tests-vlm && npm run pilot`.
-4. Ghim model ID snapshot + số token thực tế/call vào file này (mục 1 và 3).
+1. ✅ Tạo API key OpenRouter (đã có, cấu hình trong `tests-vlm/.env`).
+2. ✅ `.env` đã tạo với `MIDSCENE_MODEL_*` trỏ tới model ghim.
+3. ✅ Chạy `npm run pilot` — PASS.
+4. ✅ Ghim model ID + số token thật (mục 1 và 6).
+
+## 6. Pilot thật — số liệu đo được (08/07/2026)
+
+- **Model ghim:** `qwen/qwen3-vl-235b-a22b-instruct` qua OpenRouter, `temperature=0`, cache TẮT.
+- **Giá thật OpenRouter (tra 08/07/2026):** input **$0.20/M**, output **$0.88/M**, image ~$0 (gộp vào prompt token). Rẻ hơn giả định `qwen3-vl-plus` cũ ($1.60/M output) → chi phí thực nghiệm thực tế còn thấp hơn ước tính mục 4.
+- **Kết quả pilot:** đăng nhập bằng NL (admin/admin123) + đọc bảng Products → PASS (19.6s wall-clock, 5 AI call).
+
+| AI call | in tokens | out tokens | latency |
+|---|---|---|---|
+| aiInput username | 1 551 | 36 | 4.8s |
+| aiInput password | 1 551 | 36 | 2.5s |
+| aiTap submit | 1 551 | 36 | 1.2s |
+| aiAssert "Products table" | 1 759 | 86 | 2.1s |
+| aiNumber "count rows" | 1 745 | 137 | 2.9s |
+| **Tổng** | **8 157** | **331** | — |
+
+- **Token/call trung bình:** ~1 630 in / ~66 out (khớp tốt giả định mục 3: ~2 000 in/call).
+- **Chi phí pilot 1 lần:** 8 157×$0.20/M + 331×$0.88/M ≈ **$0.0019** (~1/5 cent).
+- **Ước tính lại toàn thực nghiệm** theo token/call thật + giá thật: ~10,6M in + 0,8M out ≈ 10,6×$0.20 + 0,8×$0.88 ≈ **$2,8** → vẫn ✅ ~6% ngân sách $50.
+
+**Quan sát grounding (ghi cho Threats to Validity):** ở call `aiNumber`, VLM đếm **9 dòng** trong khi bảng có **12**. ~~Ban đầu nghi là sai số đếm/định vị trên bảng dày~~ — đã chẩn đoán lại sau lần chạy full suite: đây KHÔNG phải lỗi grounding mà là **nhận thức bị giới hạn viewport**, xem mục 7.
+
+## 7. Phát hiện phương pháp luận: VLM perception là viewport-bound (08/07/2026)
+
+Lần chạy VLM suite đầu tiên trên V0 cho 19/27 (RBAC 8/8 xanh; 8 test main đỏ: A1, A3, A5, B4, C1, C3, C4, D2). Chẩn đoán bằng đo đạc:
+
+- **7/8 test đỏ có chung một nguyên nhân:** viewport 1280×800 chỉ hiển thị **9/12** dòng bảng Products (trang cao 976px, mỗi dòng 47px). VLM đếm đúng những gì nó **thấy trong screenshot** → `aiNumber` trả 9 thay vì 12, và trả **cùng giá trị 9 ở mọi lần lặp** (temperature=0) — tức là **deterministic, không phải flaky**. D2 fail vì dòng "Premium Coffee Beans" nằm dưới fold. Quan sát "đếm 9/12" ở pilot (mục 6) chính là hiện tượng này.
+- **B4 là bug viết test, không liên quan:** `aiInput` với `value: ''` không xóa ô search — cần `mode: 'clear'` (đã sửa).
+- **Baseline không bị ảnh hưởng** vì locator đếm DOM, không đếm pixel.
+
+**Cách xử lý (đã áp dụng):** tăng viewport lên **1280×1100** trong cả hai config (`tests-vlm` + `tests-locator`, giữ đối xứng điều kiện thí nghiệm) để toàn bộ bảng lọt trọn một screenshot. Phương án "giữ 800px + cuộn trước khi đếm" bị loại: sau khi cuộn, các dòng đầu ra khỏi màn hình — đếm vẫn thiếu.
+
+**Ý nghĩa cho báo cáo (Chương 4 / Threats to Validity):**
+- Khác biệt bản chất giữa hai phương pháp: **locator truy vấn DOM (toàn trang), VLM truy vấn ảnh chụp (chỉ phần nhìn thấy)**. Mọi phép đo dạng "đếm/kiểm tra toàn cục" bằng VLM đều ngầm giả định nội dung lọt trọn viewport.
+- Kích thước viewport là **biến nhiễu (confounder)** của thực nghiệm so sánh — phải cố định và báo cáo tường minh; kết quả VLM không khái quát sang trang dài hơn viewport nếu không có cơ chế cuộn + tổng hợp.
+- Fail do viewport là **deterministic** ở temperature=0 — nếu không chẩn đoán, dễ quy nhầm thành "VLM không chính xác" thay vì "VLM không nhìn thấy"; ảnh hưởng cách diễn giải pass rate ở RQ1.

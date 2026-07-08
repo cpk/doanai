@@ -21,7 +21,10 @@ export default defineConfig({
   reporter,
   use: {
     baseURL: 'http://localhost:5173',
-    viewport: { width: 1280, height: 800 },
+    // 1280x1100 so the full 13-row product table fits in one screenshot:
+    // VLM perception is viewport-bound (aiNumber counts visible rows only).
+    // Keep identical to tests-locator config for symmetric experiment conditions.
+    viewport: { width: 1280, height: 1100 },
   },
   webServer: {
     command: 'npm run dev',

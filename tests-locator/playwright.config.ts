@@ -13,7 +13,8 @@ export default defineConfig({
   reporter,
   use: {
     baseURL: 'http://localhost:5173',
-    viewport: { width: 1280, height: 800 },
+    // Keep identical to tests-vlm config (symmetric experiment conditions).
+    viewport: { width: 1280, height: 1100 },
   },
   webServer: {
     command: 'npm run dev',

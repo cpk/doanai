@@ -1,1 +1,1 @@
-timestamp,label,method,suite,variant,repeat,test_id,status,duration_ms,run_wall_ms
+timestamp,label,method,suite,variant,repeat,test_id,status,duration_ms,run_wall_ms,run_ai_calls,run_prompt_tokens,run_completion_tokens,run_ai_ms,run_cost_usd
