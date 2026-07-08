@@ -19,7 +19,7 @@
 
 1. RBAC VLM trên build lỗi: `git checkout rq3-seeded-bugs` → `cd tests-vlm && npx playwright test tests/rbac` → kỳ vọng R1–R5 fail (= phát hiện đúng); quay về `git checkout master`. Lưu ý: branch này chưa có 2 fix mới — nếu cần, cherry-pick commit fix sang branch trước khi chạy (RBAC không phụ thuộc viewport bảng nên có thể không cần).
 2. Benchmark RQ4: `cd masking && npm install && npm run benchmark` (cần app đang chạy + dùng chung config model như `tests-vlm/.env`).
-3. Bổ sung đếm token/cost vào `harness/run-matrix.mjs` — format nguồn dữ liệu thật đã có: `tests-vlm/midscene_run/log/ai-call.log` (mỗi dòng 1 AI call: model, prompt-tokens, completion-tokens, total-tokens, cost-ms) và JSON `"usage":{...}` nhúng trong report HTML `midscene_run/report/`.
+3. ✅ (08/07, máy Windows) Token/cost đã vào harness: `harness/token-log.mjs` parse dòng stats (`model, …, prompt-tokens, N, completion-tokens, N, total-tokens, N, cost-ms, N`) từ **mọi** file `tests-vlm/midscene_run/log/*.log` (bản Mac ghi vào `ai-call.log`, source v1.10.3 dùng topic `ai:profile:stats` → quét cả hai); mỗi run VLM thêm 5 cột `run_ai_calls, run_prompt_tokens, run_completion_tokens, run_ai_ms, run_cost_usd` vào `matrix-runs.csv` (locator để trống). Lần chạy VLM đầu tiên qua harness: kiểm tra cột token có số ≠ 0 (nếu 0 sẽ có WARNING trên console).
 4. Sau đó vào GĐ4: chạy ma trận chính `harness/run-matrix.mjs --methods locator,vlm --variants v0,v1,v2,v3 --repeats 5`.
 
 Việc sinh viên tự làm song song: đọc kỹ full-text 4 bài ⭐ (khung notes có sẵn trong `docs/notes-papers.md`); điền placeholder GVHD/họ tên/MSSV trong đề cương .docx.

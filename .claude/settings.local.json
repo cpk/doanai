@@ -22,7 +22,10 @@
       "Bash(echo \"EXIT=$?\")",
       "Bash(node -e ' *)",
       "Bash(python3 *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "PowerShell(git pull *)",
+      "PowerShell(git *)",
+      "PowerShell(Get-Content *)"
     ]
   }
 }

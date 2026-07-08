@@ -8,13 +8,15 @@
 //
 // Output: ../results/raw/matrix-runs.csv (append; safe to resume a run)
 // NOTE: for VLM runs make sure tests-vlm/.env is configured and MIDSCENE_CACHE
-// is NOT enabled. Token/cost per run is read from the Midscene report dir when
-// available (finalized after the first real pilot run).
+// is NOT enabled. For VLM runs the harness also aggregates real token usage +
+// cost per run from the Midscene debug logs (see token-log.mjs); locator runs
+// leave those columns empty.
 
 import { spawnSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { collectNewStats, snapshotLogDir } from './token-log.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
@@ -45,12 +47,28 @@ const METHOD_DIR = { locator: 'tests-locator', vlm: 'tests-vlm' };
 const OUT_DIR = path.join(ROOT, 'results', 'raw');
 mkdirSync(OUT_DIR, { recursive: true });
 const CSV = path.join(OUT_DIR, 'matrix-runs.csv');
+const HEADER =
+  'timestamp,label,method,suite,variant,repeat,test_id,status,duration_ms,run_wall_ms,run_ai_calls,run_prompt_tokens,run_completion_tokens,run_ai_ms,run_cost_usd\n';
 if (!existsSync(CSV)) {
-  writeFileSync(
-    CSV,
-    'timestamp,label,method,suite,variant,repeat,test_id,status,duration_ms,run_wall_ms\n',
-  );
+  writeFileSync(CSV, HEADER);
+} else {
+  // Migrate a CSV written before the token/cost columns: pad old rows.
+  const lines = readFileSync(CSV, 'utf8').split(/\r?\n/);
+  const oldCols = lines[0].split(',').length;
+  const newCols = HEADER.trim().split(',').length;
+  if (oldCols < newCols) {
+    const pad = ','.repeat(newCols - oldCols);
+    const body = lines
+      .slice(1)
+      .filter((l) => l !== '')
+      .map((l) => l + pad + '\n')
+      .join('');
+    writeFileSync(CSV, HEADER + body);
+    console.log(`[matrix] migrated CSV header: ${oldCols} -> ${newCols} columns`);
+  }
 }
+
+const MIDSCENE_LOG_DIR = path.join(ROOT, 'tests-vlm', 'midscene_run', 'log');
 
 // test_id = leading code in the title, e.g. "A1", "R8"
 const testId = (title) => (title.match(/^([A-Z]\d+):/) ?? [null, title])[1];
@@ -69,6 +87,7 @@ for (const method of METHODS) {
       const jsonOut = path.join(OUT_DIR, `.tmp-${method}-${variant}-${repeat}.json`);
       rmSync(jsonOut, { force: true });
 
+      const logSnapshot = method === 'vlm' ? snapshotLogDir(MIDSCENE_LOG_DIR) : null;
       const t0 = Date.now();
       const res = spawnSync('npx', ['playwright', 'test', ...SUITE_FILES[SUITE]], {
         cwd,
@@ -81,6 +100,18 @@ for (const method of METHODS) {
         },
       });
       const wall = Date.now() - t0;
+
+      // Per-run token/cost aggregate (VLM only): parse AI-call stats appended
+      // to the Midscene logs during this run. Empty columns for locator.
+      let tokenCols = ',,,,';
+      let tokenNote = '';
+      if (logSnapshot) {
+        const s = collectNewStats(MIDSCENE_LOG_DIR, logSnapshot);
+        tokenCols = `${s.calls},${s.promptTokens},${s.completionTokens},${s.aiMs},${s.costUsd.toFixed(6)}`;
+        tokenNote = ` | ${s.calls} AI calls, ${s.promptTokens}+${s.completionTokens} tok, $${s.costUsd.toFixed(4)}`;
+        if (s.calls === 0)
+          console.warn('[matrix] WARNING: no AI-call stats found in midscene_run/log — token columns are 0');
+      }
 
       if (!existsSync(jsonOut)) {
         console.error(`[matrix] ${method}/${variant}/#${repeat}: NO JSON OUTPUT — runner crashed?`);
@@ -97,13 +128,13 @@ for (const method of METHODS) {
         if (status === 'passed') passed++;
         appendFileSync(
           CSV,
-          `${ts},${LABEL},${method},${SUITE},${variant},${repeat},${testId(spec.title)},${status},${result?.duration ?? ''},${wall}\n`,
+          `${ts},${LABEL},${method},${SUITE},${variant},${repeat},${testId(spec.title)},${status},${result?.duration ?? ''},${wall},${tokenCols}\n`,
         );
         totalRows++;
       }
       rmSync(jsonOut, { force: true });
       console.log(
-        `[matrix] ${method}/${variant}/#${repeat}: ${passed}/${specs.length} passed (${(wall / 1000).toFixed(1)}s)`,
+        `[matrix] ${method}/${variant}/#${repeat}: ${passed}/${specs.length} passed (${(wall / 1000).toFixed(1)}s)${tokenNote}`,
       );
     }
   }
