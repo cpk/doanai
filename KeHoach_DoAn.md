@@ -102,7 +102,7 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
   - Ghi chú 15/15 bài ✔ (`docs/notes-papers.md`; đính chính: ITeM là ISSTA'25, VETL arXiv 2410.12157, VisionDroid→Trident)
   - Repo + scaffold app ✔ (dev server đã xác minh chạy); pilot script + fixture Midscene ✔
   - Chốt model Qwen3-VL + bảng chi phí (~$3-10, dưới xa ngân sách $50) ✔ (`docs/pilot-model-cost.md`)
-  - ⏳ Chờ user: API key (OpenRouter) để chạy pilot thật + ghim model ID snapshot (cần trước GĐ3)
+  - ✅ Pilot thật 08/07/2026: model ghim **`qwen/qwen3-vl-235b-a22b-instruct`** (OpenRouter, temp=0, cache tắt) — PASS ~$0.0019/run; token/cost chi tiết ở `docs/pilot-model-cost.md` mục 6. (Lưu ý: `qwen3-vl-plus` không có trên OpenRouter → dùng bản 235B-A22B instruct open-weight.)
   - Push GitHub: ✔ đã push lên `https://github.com/cpk/doanai` (private) ngày 07/07 — gồm `master`, tag `app-v1.0`, branch `rq3-seeded-bugs`; chuyển public khi bảo vệ
   - 📖 Việc tự đọc của sinh viên: đọc kỹ full-text 4 bài ⭐ (notes đã có sẵn khung)
 - [x] GĐ2: App + baseline (27/07) — **hoàn thành 07/07, tag `app-v1.0`**
@@ -117,7 +117,8 @@ Khớp 5 mốc trong đề cương; mỗi mốc có Definition of Done (DoD).
   - RBAC (RQ3): 8 kịch bản × 2 phương pháp; branch `rq3-seeded-bugs` cấy 5 lỗi phân quyền — locator suite: clean build 8/8 pass, seeded build phát hiện 5/5 (R1–R5 fail đúng thiết kế) ✔
   - Masking (RQ4): `masking/` capture → 40 mô tả grounding + ground-truth box tự trích; mask blur/pixelate bằng sharp (đã kiểm tra trực quan); `benchmark.mjs` gọi VLM đo hit-rate/IoU (viết xong, cần key) ✔
   - Harness: `harness/run-matrix.mjs` chạy {method}×{variant}×{repeat} → `results/raw/matrix-runs.csv`; self-test locator×{v0,v2}×2 OK (v0 18/18, v2 9/18 — gãy deterministic) ✔
-  - ⏳ Chờ API key: chạy pilot → ghim model ID; chạy xanh VLM suite trên V0; bổ sung đếm token/cost từ report Midscene vào harness (cần thấy format report thật)
-- [ ] GĐ3 (phần chạy thật): VLM suite xanh trên V0 + benchmark RQ4 + RBAC VLM trên seeded build
+  - ✅ 08/07: pilot thật PASS; model ghim `qwen/qwen3-vl-235b-a22b-instruct`; VLM suite chạy lần đầu trên V0: **19/27** (RBAC 8/8 ✔; 8 test main đỏ — nguyên nhân đã chẩn đoán xong: 7 test do viewport 800px chỉ hiện 9/12 dòng bảng → VLM đếm theo screenshot; B4 do `aiInput` rỗng không xóa ô search, cần `mode:'clear'`)
+  - ✅ 08/07 (chiều): sửa xong 2 fix — viewport 1280×1100 cả 2 suite (đối xứng) + B4 dùng `mode:'clear'` → **VLM suite 27/27 pass trên V0** (8.7 phút, không cần chỉnh prompt); baseline xác nhận lại **30/30 pass**. Phát hiện "viewport-bound perception" đã ghi thành mục 7 của `docs/pilot-model-cost.md` (tư liệu Threats to Validity / Chương 4)
+- [ ] GĐ3 (phần chạy thật, còn lại): RBAC VLM trên seeded build (`rq3-seeded-bugs`, kỳ vọng R1–R5 fail) + benchmark RQ4 + token/cost vào harness (format log đã có: `midscene_run/log/ai-call.log`)
 - [ ] GĐ4: Thực nghiệm + phân tích (07/09)
 - [ ] GĐ5: Báo cáo + slide + repo public (20/09)
