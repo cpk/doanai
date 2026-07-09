@@ -28,9 +28,10 @@ thí nghiệm**. Cụ thể:
 - Mọi số liệu được ghi **tự động** bởi harness vào CSV; hình và bảng trong Chương 4
   sinh lại được bằng một lệnh duy nhất.
 
-[HÌNH 3.1 — Sơ đồ tổng thể: App (V0–V3) → 2 bộ test song song → harness ma trận
-{phương pháp × biến thể × 5 lặp} → CSV → phân tích/biểu đồ; hai khối mở rộng:
-RBAC (RQ3) và masking (RQ4).]
+*Hình 3.1* (`fig-design-pipeline.png`) — sơ đồ tổng thể: ứng dụng (V0–V3) → hai
+bộ test song song → harness ma trận {phương pháp × biến thể × 5 lặp} → CSV →
+phân tích; hai khối mở rộng RBAC (RQ3) và masking (RQ4) đổ số liệu vào cùng
+kho dữ liệu thô.
 
 ## 3.2. Ứng dụng thực nghiệm "Mini Shop Manager"
 

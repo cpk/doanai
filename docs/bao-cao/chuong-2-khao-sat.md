@@ -155,10 +155,31 @@ giá.
 
 ### 2.2.4. Bảng tổng hợp
 
-[BẢNG 2.1 — 15 công trình × {nền tảng; tín hiệu vào (text/vision); nhiệm vụ;
-có so sánh đối chứng locator-vs-VLM?; có đo chi phí bảo trì?; có xét bảo mật?}.
-Ba cột cuối gần như trống toàn bộ ở 15 hàng — trực quan hóa ba khoảng trống;
-hàng cuối "Đồ án này" đánh dấu đủ ba cột. Dựng bảng khi ghép vào template.]
+Bảng 2.1 đối chiếu 15 công trình trên sáu tiêu chí; ba cột cuối tương ứng ba
+khoảng trống ở mục 1.2 — gần như trống toàn bộ ở 15 hàng khảo sát:
+
+| # | Công trình | Nền tảng | Tín hiệu vào | Nhiệm vụ chính | So sánh cặp locator↔VLM | Đo chi phí bảo trì | Xét bảo mật |
+|---|---|---|---|---|:-:|:-:|:-:|
+| [1] | Survey LLM4Testing (TSE'24) | tổng quát | — | khảo sát 102 công trình | — | — | — |
+| [2] | GPTDroid (ICSE'24) | mobile | text | khám phá + phát hiện bug | — | — | — |
+| [3] | VETL (ICSME'24) | web | vision | sinh input + chọn phần tử | — | — | — |
+| [4] | VisionDroid/Trident | mobile | vision | oracle non-crash bug | — | — | — |
+| [5] | QTypist (ICSE'23) | mobile | text | sinh text input | — | — | — |
+| [6] | LLMDroid (FSE'25) | mobile | text | dẫn hướng coverage | — | △ | — |
+| [7] | AUITestAgent | mobile | text + vision | kiểm thử theo yêu cầu NL | — | — | — |
+| [8] | GTArena | mobile | vision | benchmark thống nhất | — | — | — |
+| [9] | Temac | web | text | đa agent tăng coverage | — | — | — |
+| [10] | NaviQAte | web | text + vision | điều hướng theo chức năng | — | — | — |
+| [11] | AutoE2E (ICSE'25) | web | text | sinh test E2E theo feature | — | — | — |
+| [12] | Nghiên cứu MLLM-oracle | mobile | vision | oracle non-crash bug | — | — | — |
+| [13] | ITeM (ISSTA'25) | mobile | text | migrate test theo ý định | — | △ | — |
+| [14] | Guardian (ISSTA'24) | mobile | text | kiểm soát runtime cho agent | — | — | — |
+| [15] | Survey vision-based (CSUR) | mobile | vision | khảo sát tiền-LLM | — | — | — |
+| — | **Đồ án này** | **web** | **cả hai (đối chứng)** | **so sánh định lượng 2 phương pháp + RBAC + masking** | **✓** | **✓** | **✓** |
+
+Chú giải: ✓ = có, trực tiếp; △ = chạm một phần ([6] chỉ đo chi phí vận hành
+$/giờ, không đo chi phí bảo trì; [13] migrate test giữa các app — gần khái niệm
+bảo trì nhưng không đo theo cặp phương pháp trên cùng ứng dụng); — = không đề cập.
 
 ## 2.3. Phân tích sâu bốn công trình đại diện
 

@@ -34,6 +34,7 @@ CHAPTER_FILES = [
 ]
 
 FIG_CAPTIONS = {
+    "fig-design-pipeline.png": "Hình 3.1 — Sơ đồ tổng thể thiết kế thực nghiệm",
     "fig-rq1-passrate.png": "Hình 4.1 — RQ1: tỉ lệ pass theo biến thể giao diện (18 test × 5 lặp)",
     "fig-rq1-time-cost.png": "Hình 4.2 — RQ1: thời gian thực thi và chi phí API mỗi run",
     "fig-rq2-maintenance.png": "Hình 4.3 — RQ2: chi phí bảo trì khi nâng cấp giao diện V0 → Vx",

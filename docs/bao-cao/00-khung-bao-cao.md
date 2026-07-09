@@ -10,8 +10,8 @@
 |---|---|---|---|
 | Mở đầu (bìa, lời cảm ơn, tóm tắt, mục lục) | (làm trong template .docx) | Tóm tắt ~1 trang: vấn đề → phương pháp → 4 kết quả chính | ⬜ chưa |
 | 1. Giới thiệu | `chuong-1-gioi-thieu.md` | Bối cảnh, 3 gap, 4 RQ, mục tiêu/phạm vi, 5 đóng góp | ✅ nháp đầy đủ |
-| 2. Cơ sở lý thuyết & khảo sát | `chuong-2-khao-sat.md` | GUI testing, VLM, taxonomy 15 bài, định vị đồ án | ✅ nháp đầy đủ (⚠️ đối chiếu số liệu 4 bài ⭐ khi đọc full-text; dựng Bảng 2.1) |
-| 3. Phương pháp & thiết kế thực nghiệm | `chuong-3-phuong-phap.md` | App + biến thể, 2 suite, harness, thiết kế 4 RQ | ✅ nháp đầy đủ (chèn Hình 3.1–3.3) |
+| 2. Cơ sở lý thuyết & khảo sát | `chuong-2-khao-sat.md` | GUI testing, VLM, taxonomy 15 bài + Bảng 2.1, định vị đồ án | ✅ nháp đầy đủ (⚠️ đối chiếu số liệu 4 bài ⭐ khi đọc full-text) |
+| 3. Phương pháp & thiết kế thực nghiệm | `chuong-3-phuong-phap.md` | App + biến thể, 2 suite, harness, thiết kế 4 RQ; Hình 3.1–3.3 nhúng trong docx | ✅ nháp đầy đủ |
 | 4. Kết quả & thảo luận | `chuong-4-ket-qua.md` | Kết quả 4 RQ, trade-off, threats | ✅ nháp đầy đủ (Hình 4.1–4.5 đã đánh số; 1 TODO chờ GVHD) |
 | 5. Kết luận & hướng phát triển | `chuong-5-ket-luan.md` | Trả lời RQ, 5 contribution, hạn chế, hướng phát triển | ✅ nháp đầy đủ |
 | Tài liệu tham khảo | `tai-lieu-tham-khao.md` | [1]–[15] + công cụ/model/OWASP/repo | ✅ nháp (định dạng lại theo khoa) |
@@ -61,8 +61,10 @@ Việc còn lại để thành bản nộp:
 1. **Sinh viên đọc — duyệt — sửa giọng văn** từng chương (thứ tự đọc đề xuất:
    3 → 4 → 1 → 2 → 5); đặc biệt Chương 2: đối chiếu số liệu in đậm với full-text
    4 bài ⭐ trước khi giữ nguyên.
-2. Xử lý các chỗ đánh dấu còn lại: [HÌNH 3.1–3.3] (sơ đồ tổng thể + screenshot),
-   [BẢNG 2.1] (dựng khi ghép template), TODO 4.7-(3) (chờ ý GVHD về baseline).
+2. Xử lý chỗ đánh dấu còn lại duy nhất: TODO 4.7-(3) (chờ ý GVHD về baseline).
+   (Hình 3.1 = `fig-design-pipeline.png` do `harness/make-pipeline-diagram.py` vẽ;
+   Bảng 2.1 đã dựng trong Chương 2; Hình 3.2–3.3 và mọi hình khác nhúng tự động
+   khi chạy `make-report-docx.py`.)
 3. Ghép vào template .docx của khoa: đánh số hình/bảng, mục lục, tóm tắt ~1 trang,
    định dạng lại tài liệu tham khảo theo quy định.
 4. Dựng file trình chiếu từ `slide-bao-ve.md` (khung 16 slide + 6 backup đã có,
