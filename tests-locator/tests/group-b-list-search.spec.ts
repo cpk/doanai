@@ -7,7 +7,7 @@ test('B1: searching by name narrows the list to a single match', async ({ page }
   await gotoProducts(page);
   await page.fill('.toolbar > input.search-input', 'cola classic');
   await expect(page.locator('.product-table tbody tr')).toHaveCount(1);
-  await expect(page.locator('.product-table tbody tr:nth-child(1) td:nth-child(1)')).toHaveText(
+  await expect(page.locator('.product-table tbody tr:nth-child(1) td:nth-child(2)')).toHaveText(
     'Cola Classic 330ml',
   );
 });

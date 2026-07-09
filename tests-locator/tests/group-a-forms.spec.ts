@@ -34,7 +34,7 @@ test('A3: add-product form creates a new row', async ({ page }) => {
   await modal.locator('label:nth-of-type(6) input').fill('50');
   await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
   await expect(page.locator('.product-table tbody tr')).toHaveCount(13);
-  await expect(page.locator('.product-table tbody tr:nth-child(13) td:nth-child(1)')).toHaveText(
+  await expect(page.locator('.product-table tbody tr:nth-child(13) td:nth-child(2)')).toHaveText(
     'Energy Drink 250ml',
   );
 });
