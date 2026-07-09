@@ -6,7 +6,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 DEST="${1:-$HOME/Desktop/doanai-bao-ve}"
 
-rm -rf "$DEST"
+# Selective cleanup: regenerate only what this script owns, preserving
+# user-added content (recorded demo video, an unpacked+installed doanai-src,
+# a filled-in .env) that a blanket rm -rf would destroy.
+rm -rf "$DEST/01-bao-cao" "$DEST/02-slide" "$DEST/03-so-lieu-hinh" "$DEST/04-phan-bien"
+rm -f "$DEST/HUONG-DAN.md" \
+      "$DEST/05-demo-offline/vlm-suite-report.html" \
+      "$DEST/05-demo-offline/vlm-test-A3-report.html" \
+      "$DEST/05-demo-offline/README.md" \
+      "$DEST/06-ma-nguon/doanai-src.zip" \
+      "$DEST/06-ma-nguon/README.md"
 mkdir -p "$DEST"/{01-bao-cao,02-slide,03-so-lieu-hinh,04-phan-bien,05-demo-offline,06-ma-nguon}
 
 # 01 — report documents
@@ -26,12 +35,12 @@ cp "$ROOT/results/rq2-maintenance.md" "$DEST/03-so-lieu-hinh/"
 cp "$ROOT/results/raw/matrix-runs.csv" "$DEST/03-so-lieu-hinh/"
 cp "$ROOT/masking/generated/grounding-results.csv" "$DEST/03-so-lieu-hinh/"
 
-# 04 — Q&A material (chapters, paper notes, methodology findings, advisor notes)
-cp "$ROOT"/docs/bao-cao/chuong-*.md "$DEST/04-phan-bien/"
-cp "$ROOT/docs/bao-cao/phu-luc.md" "$ROOT/docs/bao-cao/tai-lieu-tham-khao.md" \
-   "$ROOT/docs/bao-cao/00-khung-bao-cao.md" "$DEST/04-phan-bien/"
-cp "$ROOT/docs/notes-papers.md" "$ROOT/docs/pilot-model-cost.md" \
-   "$ROOT/docs/gvhd-trao-doi.md" "$DEST/04-phan-bien/"
+# 04 — Q&A material only (files the run-of-show question map points at).
+# Working/AI-development artifacts (chapter markdown drafts, the writing
+# coordinator, advisor-meeting notes) stay in the repo — the DOCX already
+# carries all submitted content.
+cp "$ROOT/docs/bao-cao/phu-luc.md" "$DEST/04-phan-bien/"
+cp "$ROOT/docs/notes-papers.md" "$ROOT/docs/pilot-model-cost.md" "$DEST/04-phan-bien/"
 
 # 05 — offline demo evidence: the merged 27/27 suite report + one single test
 MERGED=$(ls -t "$ROOT"/tests-vlm/midscene_run/report/playwright-merged-*.html | head -1)
