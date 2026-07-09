@@ -12,14 +12,14 @@ test('C1: a created product survives a page reload (localStorage persistence)', 
   page,
 }) => {
   await gotoProducts(page);
-  await page.click("xpath=//button[text()='Add product']");
+  await page.click("xpath=//button[text()='Create item']");
   const modal = page.locator('.modal.product-form');
   await modal.locator('label:nth-of-type(1) input').fill('Trail Mix 300g');
   await modal.locator('label:nth-of-type(2) input').fill('SNK-004');
   await modal.locator('label:nth-of-type(3) select').selectOption('Snack');
   await modal.locator('label:nth-of-type(4) input').fill('3.30');
   await modal.locator('label:nth-of-type(6) input').fill('44');
-  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
+  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Confirm']");
   await expect(page.locator('.product-table tbody tr')).toHaveCount(13);
 
   await page.reload();
@@ -36,7 +36,7 @@ test('C2: editing a product updates its row', async ({ page }) => {
   const modal = page.locator('.modal.product-form');
   await modal.locator('label:nth-of-type(1) input').fill('Green Tea Bottle 600ml');
   await modal.locator('label:nth-of-type(6) input').fill('99');
-  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
+  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Confirm']");
   await expect(page.locator('.product-table tbody tr:nth-child(2) td:nth-child(1)')).toHaveText(
     'Green Tea Bottle 600ml',
   );

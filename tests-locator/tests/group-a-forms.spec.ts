@@ -24,7 +24,7 @@ test('A2: login with a wrong password shows an error message', async ({ page }) 
 
 test('A3: add-product form creates a new row', async ({ page }) => {
   await gotoProducts(page);
-  await page.click("xpath=//button[text()='Add product']");
+  await page.click("xpath=//button[text()='Create item']");
   const modal = page.locator('.modal.product-form');
   await modal.locator('label:nth-of-type(1) input').fill('Energy Drink 250ml');
   await modal.locator('label:nth-of-type(2) input').fill('BEV-004');
@@ -32,7 +32,7 @@ test('A3: add-product form creates a new row', async ({ page }) => {
   await modal.locator('label:nth-of-type(4) input').fill('1.75');
   await modal.locator('label:nth-of-type(5) input').fill('0.95');
   await modal.locator('label:nth-of-type(6) input').fill('50');
-  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
+  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Confirm']");
   await expect(page.locator('.product-table tbody tr')).toHaveCount(13);
   await expect(page.locator('.product-table tbody tr:nth-child(13) td:nth-child(1)')).toHaveText(
     'Energy Drink 250ml',
@@ -41,8 +41,8 @@ test('A3: add-product form creates a new row', async ({ page }) => {
 
 test('A4: submitting an empty product form shows validation errors', async ({ page }) => {
   await gotoProducts(page);
-  await page.click("xpath=//button[text()='Add product']");
-  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
+  await page.click("xpath=//button[text()='Create item']");
+  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Confirm']");
   const errors = page.locator('.modal .field-error');
   await expect(errors).toHaveCount(4);
   await expect(errors.nth(0)).toHaveText('Name is required');
@@ -52,13 +52,13 @@ test('A4: submitting an empty product form shows validation errors', async ({ pa
 
 test('A5: a non-positive price is rejected with a field error', async ({ page }) => {
   await gotoProducts(page);
-  await page.click("xpath=//button[text()='Add product']");
+  await page.click("xpath=//button[text()='Create item']");
   const modal = page.locator('.modal.product-form');
   await modal.locator('label:nth-of-type(1) input').fill('Broken Item');
   await modal.locator('label:nth-of-type(2) input').fill('TST-001');
   await modal.locator('label:nth-of-type(4) input').fill('-5');
   await modal.locator('label:nth-of-type(6) input').fill('10');
-  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
+  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Confirm']");
   await expect(page.locator('.modal .field-error')).toHaveText('Price must be greater than 0');
   // The row must NOT be created
   await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Cancel']");

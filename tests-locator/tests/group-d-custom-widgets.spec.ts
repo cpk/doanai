@@ -19,7 +19,7 @@ test('D1: the view icon opens a read-only product detail', async ({ page }) => {
 
 test('D2: the star widget sets the rating in the product form', async ({ page }) => {
   await gotoProducts(page);
-  await page.click("xpath=//button[text()='Add product']");
+  await page.click("xpath=//button[text()='Create item']");
   const modal = page.locator('.modal.product-form');
   await modal.locator('label:nth-of-type(1) input').fill('Premium Coffee Beans');
   await modal.locator('label:nth-of-type(2) input').fill('BEV-005');
@@ -27,7 +27,7 @@ test('D2: the star widget sets the rating in the product form', async ({ page })
   await modal.locator('label:nth-of-type(6) input').fill('20');
   // click the 5th star of the rating input inside the form
   await modal.locator('.form-rating .stars > span:nth-child(5)').click();
-  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
+  await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Confirm']");
   // rating is the 7th column; all 5 stars of the new row must be filled
   await expect(
     page.locator('.product-table tbody tr:nth-child(13) td:nth-child(7) .star.filled'),
