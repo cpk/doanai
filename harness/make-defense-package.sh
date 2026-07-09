@@ -61,6 +61,9 @@ EOF
 
 cp "$ROOT/docs/bao-cao/huong-dan-bao-ve.md" "$DEST/HUONG-DAN.md"
 
+# The deliverables must not carry the repo owner's GitHub account name.
+python3 "$ROOT/harness/scrub-defense-package.py" "$DEST"
+
 echo "Defense package built at: $DEST"
 du -sh "$DEST"
 du -sh "$DEST"/*/ | sed 's|'"$DEST"'/||'
