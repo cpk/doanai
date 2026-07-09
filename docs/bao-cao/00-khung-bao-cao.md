@@ -65,7 +65,8 @@ Việc còn lại để thành bản nộp:
    [BẢNG 2.1] (dựng khi ghép template), TODO 4.7-(3) (chờ ý GVHD về baseline).
 3. Ghép vào template .docx của khoa: đánh số hình/bảng, mục lục, tóm tắt ~1 trang,
    định dạng lại tài liệu tham khảo theo quy định.
-4. Làm slide bảo vệ (từ khung: vấn đề → 3 gap → thiết kế → 4 kết quả → demo) + demo.
+4. Dựng file trình chiếu từ `slide-bao-ve.md` (khung 16 slide + 6 backup đã có,
+   kèm talk track/thời lượng) + chuẩn bị demo và video demo dự phòng.
 5. Chuyển repo public trước khi bảo vệ; xoay API key sau khi xong toàn bộ.
 
 ## Việc chờ quyết định bên ngoài
