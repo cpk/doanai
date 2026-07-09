@@ -1,28 +1,45 @@
 # Setup máy mới & tiếp tục công việc (handoff)
 
-> Cập nhật cuối: **08/07/2026, tối** (máy Mac, sau khi VLM suite xanh toàn bộ trên V0) — dùng file này khi mở session/máy mới để tiếp tục không gián đoạn.
+> Cập nhật cuối: **09/07/2026** (máy Windows, sau khi hoàn tất toàn bộ phần chạy tự động của GĐ4) — dùng file này khi mở session/máy mới để tiếp tục không gián đoạn.
 
 ## 1. Trạng thái hiện tại (đang ở đâu)
 
-- **GĐ1 ✔ + GĐ2 ✔** (tag `app-v1.0`, app đã freeze). **GĐ3: VLM suite ĐÃ XANH TOÀN BỘ trên V0 — 27/27 (08/07 tối, 8.7 phút)**; baseline xác nhận lại **30/30** sau khi đổi viewport. Hai fix đã áp dụng: viewport 1280×1100 (cả 2 suite, đối xứng) + B4 dùng `aiInput` `mode:'clear'`. Phát hiện "viewport-bound perception" ghi ở `docs/pilot-model-cost.md` mục 7. Chi tiết từng mục: `KeHoach_DoAn.md` mục 7.
-- **Model đã ghim: `qwen/qwen3-vl-235b-a22b-instruct`** qua OpenRouter (lưu ý: `qwen3-vl-plus` KHÔNG tồn tại trên OpenRouter — proprietary, chỉ có trên DashScope). Giá thật: $0.20/M in, $0.88/M out; pilot ≈ $0.0019/lần. Số liệu token/call: `docs/pilot-model-cost.md` mục 6.
-- `tests-vlm/.env` đã có trên máy Mac này (key OpenRouter, gitignored). Máy khác: tạo lại từ `.env.example`. ⚠️ Key này đã bị dán vào chat AI — **xoay key sau khi xong thực nghiệm**.
-- Lịch sử: lần chạy VLM đầu trên V0 (08/07 chiều, viewport 800px) được 19/27 — 8 test đỏ (A1, A3, A5, B4, C1, C3, C4, D2) đều đã xanh sau 2 fix nói trên; chi tiết chẩn đoán: `docs/pilot-model-cost.md` mục 7.
-- Nhánh/tag trên remote `https://github.com/cpk/doanai` (private): `master`, tag `app-v1.0`, branch `rq3-seeded-bugs` (KHÔNG merge vào master).
-- Máy Mac: Node 20.11, deps đã cài cho `app/` + `tests-vlm/` + `tests-locator/`, Playwright Chromium đã cài. `masking/` CHƯA `npm install` trên máy này.
+- **GĐ1 ✔ + GĐ2 ✔ + GĐ3 ✔ (toàn bộ, kể cả phần chạy thật). GĐ4: phần chạy tự động ✔ xong sớm 09/07** — số liệu chính thức RQ1/RQ3/RQ4 đã nằm đủ trong repo. Chi tiết từng mốc: `KeHoach_DoAn.md` mục 7.
+- **Số liệu chính thức (tất cả deterministic, flakiness=0, temp=0, cache tắt):**
+  - RQ1 (`results/raw/matrix-runs.csv`, label `gd4-main`, 2×4×5): locator V0 18/18, V1 18/18, **V2 9/18, V3 12/18**; VLM **18/18 cả 4 biến thể**. VLM ~93 call, **$0.050/run**, ~7–10 phút/run vs locator ~3s (V0/V1) / ~32s (V2/V3 do test fail chờ timeout).
+  - RQ3 (label `gd4-rbac-clean` + `gd4-rbac-seeded`, 2 phương pháp × 5 lặp mỗi build): cả locator lẫn VLM detection **5/5** (R1–R5 fail đủ 5/5 lần trên seeded), false alarm **0/3** (R6–R8 + clean build 8/8). VLM RBAC $0.0052/run.
+  - RQ4 (`masking/generated/grounding-results.csv` + `raw-calls.jsonl`): hit-rate **100% cả 3 điều kiện** (orig/blur/pixel); IoU giảm nhẹ và chỉ trên màn PII (c01 0.764→0.709, c03 0.806→0.730). $0.112/360 call.
+- **Model ghim: `qwen/qwen3-vl-235b-a22b-instruct`** qua OpenRouter, $0.20/M in + $0.88/M out. Tổng chi phí API đến nay ≈ **$1.5** / ngân sách $50.
+- 2 phát hiện phương pháp luận cho Chương 4 / Threats to Validity: **viewport-bound perception** (`docs/pilot-model-cost.md` mục 7) và **Qwen grounding trả tọa độ chuẩn hóa 0–1000** (mục 8).
+- Nhánh/tag trên remote `https://github.com/cpk/doanai` (private): `master`, tag `app-v1.0`, branch `rq3-seeded-bugs` (KHÔNG merge vào master; đã đồng bộ tooling từ master tại `4daf158`).
+- ⚠️ `tests-vlm/.env` (key OpenRouter) là gitignored — **máy mới phải tạo lại từ `.env.example`** (quan trọng nhất: `MIDSCENE_MODEL_API_KEY`; `masking/benchmark.mjs` cũng đọc chung file này). Key hiện tại đã dán qua chat AI — **xoay key sau khi xong toàn bộ thực nghiệm**. KHÔNG cần key cho: locator suite, phân tích CSV, vẽ biểu đồ, viết báo cáo.
 
 ## 2. Việc tiếp theo (theo thứ tự) — bắt đầu từ đây
 
-**Đã xong 08/07 tối (các bước 1–6 của kế hoạch cũ):** 2 fix (viewport 1280×1100 cả hai config + B4 `mode:'clear'`) → VLM suite **27/27** trên V0, baseline **30/30**, phát hiện viewport-bound perception ghi ở `docs/pilot-model-cost.md` mục 7, đã commit mốc.
+Phần chạy tự động GĐ3+GĐ4 đã xong hết (RQ1/RQ3/RQ4 — số liệu ở mục 1). Còn lại của GĐ4:
 
-**Còn lại (theo thứ tự):**
+### 2.1. RQ2 — maintenance cost (việc chính còn lại; phương án lai đã phân tích 09/07)
 
-1. ✅ (08/07 tối, máy Windows) RBAC VLM trên build lỗi: đã merge master vào `rq3-seeded-bugs` (commit `4daf158`, đã push) rồi chạy qua harness (`--methods vlm --suite rbac --label rq3-seeded-vlm-verify`): **R1–R5 fail đúng thiết kế (phát hiện 5/5), R6–R8 pass**; $0.0052/run. Số liệu nằm trong `results/raw/matrix-runs.csv`.
-2. ✅ (08/07 tối) Benchmark RQ4 hoàn tất: hit-rate 100% cả 3 điều kiện, IoU giảm nhẹ trên màn PII (orig 0.737 / blur 0.722 / pixel 0.706 toàn cục), $0.112/360 call → `masking/generated/grounding-results.csv` + `raw-calls.jsonl`. Lưu ý 2 cạm bẫy đã sửa (chuẩn tọa độ 0–1000 của Qwen + item dưới fold): `docs/pilot-model-cost.md` mục 8. Nếu capture lại: cần app chạy (`cd app && npm run dev`), viewport 1280×1100.
-3. ✅ (08/07, máy Windows) Token/cost đã vào harness: `harness/token-log.mjs` parse dòng stats (`model, …, prompt-tokens, N, completion-tokens, N, total-tokens, N, cost-ms, N`) từ **mọi** file `tests-vlm/midscene_run/log/*.log` (bản Mac ghi vào `ai-call.log`, source v1.10.3 dùng topic `ai:profile:stats` → quét cả hai); mỗi run VLM thêm 5 cột `run_ai_calls, run_prompt_tokens, run_completion_tokens, run_ai_ms, run_cost_usd` vào `matrix-runs.csv` (locator để trống). Lần chạy VLM đầu tiên qua harness: kiểm tra cột token có số ≠ 0 (nếu 0 sẽ có WARNING trên console).
-4. Sau đó vào GĐ4: chạy ma trận chính `harness/run-matrix.mjs --methods locator,vlm --variants v0,v1,v2,v3 --repeats 5`.
+Bối cảnh: VLM suite **không hỏng test nào** trên V1–V3 → phía VLM: 0 test sửa / 0 LOC / 0 phút (bản thân đây là kết quả RQ2). Chỉ còn đo phía locator: **V2 hỏng 9 test, V3 hỏng 6 test** (V1 không hỏng — xem CSV label `gd4-main`).
 
-Việc sinh viên tự làm song song: đọc kỹ full-text 4 bài ⭐ (khung notes có sẵn trong `docs/notes-papers.md`); điền placeholder GVHD/họ tên/MSSV trong đề cương .docx.
+Phương án lai (AI làm phần khách quan, người làm phần thời gian):
+1. **Claude sửa bộ locator** cho V2, V3 trên branch riêng (`rq2-fix-v2`, `rq2-fix-v3`), quy tắc **sửa tối thiểu để pass lại** (chỉ đổi selector/assertion, không refactor, không đổi cấu trúc test) → thu 2 chỉ số khách quan: **số test phải sửa + diff LOC** (`git diff --stat`). Hai chỉ số này không phụ thuộc ai gõ phím.
+2. **Chỉ số thời gian sửa** — 2 lựa chọn, ⚠️ **hỏi ý GVHD trước khi chốt**:
+   - (a) Sinh viên tự sửa lại từ đầu trên branch khác (không nhìn bản Claude sửa), tự bấm giờ từng biến thể → đúng đề cương "cùng một người sửa cả hai bộ theo quy trình thống nhất".
+   - (b) Bỏ/hạ cấp chỉ số thời gian, ghi minh bạch trong Threats to Validity rằng việc bảo trì có AI hỗ trợ.
+3. Xác nhận sau khi sửa: `cd tests-locator` rồi `APP_VARIANT=v2 npx playwright test tests/group-*` phải 18/18 (tương tự v3). Ghi số liệu vào `results/rq2-maintenance.md`.
+
+Lệnh mở đầu khi tiếp tục với Claude Code ở máy mới: **"đọc docs/setup-new-machine.md mục 2.1, làm bước 1 của RQ2 (sửa locator cho V2/V3 trên branch riêng, đo số test sửa + diff LOC)"**.
+
+### 2.2. Phân tích số liệu + biểu đồ (tuần 9 — làm được ngay, KHÔNG cần API key)
+
+Nguồn: `results/raw/matrix-runs.csv` (label `gd4-*`) + `masking/generated/grounding-results.csv`. Cần: pass-rate theo biến thể ×2 phương pháp (RQ1), bảng detection/false-alarm (RQ3), hit-rate + IoU theo điều kiện (RQ4), bảng chi phí (token/$/wall-clock per run). Vẽ bằng Python matplotlib (chạy qua `py`) → lưu `results/figures/`. Claude làm tự động được toàn bộ mục này.
+
+### 2.3. Nháp Chương 4
+
+Khung: kết quả từng RQ (số ở mục 1) + thảo luận trade-off (robustness ↔ thời gian/chi phí) + Threats to Validity (viewport confounder, tọa độ 0–1000, single-app/single-model, AI-assisted maintenance nếu chọn 2.1-2b).
+
+**Việc sinh viên tự làm song song:** đọc kỹ full-text 4 bài ⭐ (khung notes trong `docs/notes-papers.md`); điền placeholder GVHD/họ tên/MSSV trong đề cương .docx; **trao đổi GVHD 2 việc**: chốt cách đo thời gian RQ2 (mục 2.1) + báo kết quả khảo sát đổi model sang Qwen3-VL (`docs/pilot-model-cost.md` mục 1).
 
 ## 3. Setup máy mới (Windows)
 
