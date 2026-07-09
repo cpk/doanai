@@ -16,7 +16,7 @@
 
 ## 2. Việc tiếp theo (theo thứ tự) — bắt đầu từ đây
 
-> **Cập nhật 09/07 (máy Mac):** mục 2.1 bước 1 ✔ (V2 = 9 test/24 LOC trên `rq2-fix-v2`, V3 = 6 test/22 LOC trên `rq2-fix-v3` — xem `results/rq2-maintenance.md`), mục 2.2 ✔ (`harness/make-figures.py` → `results/figures/` + `results/analysis-summary.md`), mục 2.3 ✔ (`docs/chuong4-draft.md`). **Cập nhật thêm 09/07 (chiều):** đề cương .docx (chưa nộp) đã sửa theo hướng "quy trình bảo trì chuẩn hóa tự động" — không cần sinh viên sửa tay/bấm giờ nữa; phương án (a)/(b) bên dưới chỉ còn là bối cảnh lịch sử + dự phòng. Còn lại: đo thời gian phục hồi của agent (`rq2-agent-v2/v3`) và trình bày thiết kế với GVHD theo `docs/gvhd-trao-doi.md`.
+> **Cập nhật 09/07 (máy Mac):** mục 2.1 bước 1 ✔ (V2 = 9 test/24 LOC trên `rq2-fix-v2`, V3 = 6 test/22 LOC trên `rq2-fix-v3` — xem `results/rq2-maintenance.md`), mục 2.2 ✔ (`harness/make-figures.py` → `results/figures/` + `results/analysis-summary.md`), mục 2.3 ✔ (nay ở `docs/bao-cao/chuong-4-ket-qua.md`). **Cập nhật thêm 09/07 (chiều):** đề cương .docx (chưa nộp) đã sửa theo hướng "quy trình bảo trì chuẩn hóa tự động" — không cần sinh viên sửa tay/bấm giờ nữa; phương án (a)/(b) bên dưới chỉ còn là bối cảnh lịch sử + dự phòng. Còn lại: đo thời gian phục hồi của agent (`rq2-agent-v2/v3`) và trình bày thiết kế với GVHD theo `docs/gvhd-trao-doi.md`.
 
 Phần chạy tự động GĐ3+GĐ4 đã xong hết (RQ1/RQ3/RQ4 — số liệu ở mục 1). Còn lại của GĐ4:
 

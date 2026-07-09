@@ -28,7 +28,8 @@
 
 ## 4.2. RQ1 — Độ bền vững khi giao diện thay đổi
 
-*Hình:* `fig-rq1-passrate.png`, `fig-rq1-time-cost.png` (label `gd4-main`, 2×4×5 = 720 dòng).
+*Hình 4.1* (`fig-rq1-passrate.png`) và *Hình 4.2* (`fig-rq1-time-cost.png`);
+số liệu: label `gd4-main`, 2×4×5 = 720 dòng.
 
 | Phương pháp | V0 | V1 (theme) | V2 (bố cục) | V3 (icon/nhãn) |
 |---|---|---|---|---|
@@ -57,7 +58,7 @@ phát sinh chi phí API mỗi lần chạy.
 
 ## 4.3. RQ2 — Chi phí bảo trì
 
-*Hình:* `fig-rq2-maintenance.png`; chi tiết: `results/rq2-maintenance.md`.
+*Hình 4.3* (`fig-rq2-maintenance.png`); chi tiết: `results/rq2-maintenance.md`.
 
 Quy trình: sửa tối thiểu bộ locator cho pass lại 18/18 trên từng biến thể
 (chỉ đổi selector/assertion, không refactor), mỗi biến thể một branch riêng
@@ -75,8 +76,17 @@ phải sửa + diff LOC bằng `git diff --stat`.
   nhưng bản chất kinh tế của hai phương pháp khác nhau: locator trả chi phí
   **một lần, khi giao diện đổi** (công sửa script); VLM trả chi phí **mỗi lần
   chạy** ($0.050/run + 7–10 phút). Điểm hòa vốn phụ thuộc tần suất đổi giao diện
-  so với tần suất chạy CI. ⚠️ TODO: có thể thêm 1 đoạn ước lượng break-even
-  minh họa (ví dụ: 46 LOC ≈ X phút công so với N run × $0.05).
+  so với tần suất chạy suite.
+- *Ước lượng hòa vốn minh họa* (các giả định nêu tường minh, chỉ có tính chất
+  định hướng): về **tiền**, chi phí API của VLM ~$0.05/run là không đáng kể —
+  1.000 run ≈ $50. Đánh đổi thực sự nằm ở **thời gian**: mỗi run VLM tốn thêm
+  ~8 phút so với ~3 giây của locator; một dự án chạy suite 10 lần/ngày sẽ trả
+  thêm ~80 phút thời gian máy mỗi ngày, đổi lấy việc không phải sửa test khi
+  giao diện đổi (mỗi đợt đổi kiểu V2/V3 tốn 6–9 test / 22–24 LOC phải sửa và
+  toàn bộ thời gian chẩn đoán–sửa–xác nhận kèm theo). Hàm ý thực tiễn: hai
+  phương pháp phù hợp hai chế độ khác nhau — locator cho vòng lặp CI dày đặc
+  trên giao diện ổn định; VLM cho kiểm thử theo lịch thưa hơn, giai đoạn giao
+  diện biến động nhanh, hoặc làm lớp "regression theo ý định" ít phải bảo trì.
 - Chỉ số **thời gian phục hồi bộ test**: theo đề cương, việc bảo trì do cùng một
   quy trình chuẩn hóa tự động thực hiện (AI coding agent, chỉ dẫn sửa-tối-thiểu cố
   định) nên thời gian đo được là thời gian phục hồi của quy trình đó — tái lập
@@ -91,7 +101,7 @@ phải sửa + diff LOC bằng `git diff --stat`.
 
 ## 4.4. RQ3 — Phát hiện lỗi phân quyền hiển thị (role-based UI)
 
-*Hình:* `fig-rq3-detection.png` (label `gd4-rbac-clean`, `gd4-rbac-seeded`).
+*Hình 4.4* (`fig-rq3-detection.png`); số liệu: label `gd4-rbac-clean`, `gd4-rbac-seeded`.
 
 Thiết kế: 8 kịch bản RBAC (R1–R8) chạy bằng cả hai phương pháp trên (i) build
 sạch (`master`) và (ii) build cấy 5 lỗi phân quyền hiển thị cố ý (branch
@@ -117,8 +127,8 @@ trang Settings, …); mỗi tổ hợp lặp 5 lần.
 
 ## 4.5. RQ4 — Trade-off che dữ liệu nhạy cảm ↔ độ chính xác định vị
 
-*Hình:* `fig-rq4-hitrate-iou.png` (`masking/generated/grounding-results.csv`,
-360 call = 40 item × 3 điều kiện × 3 lặp, $0.112).
+*Hình 4.5* (`fig-rq4-hitrate-iou.png`); số liệu: `masking/generated/grounding-results.csv`
+(360 call = 40 item × 3 điều kiện × 3 lặp, $0.112).
 
 Thiết kế: 40 mục tiêu định vị trên 4 màn hình (login, products-admin và 2 trang
 hồ sơ khách hàng chứa PII); ảnh gửi VLM ở 3 điều kiện: gốc, blur, pixelate
@@ -194,8 +204,10 @@ trade-off chỉ xuất hiện dưới dạng IoU giảm nhẹ tại đúng vùng
 
 ---
 
-⚠️ TODO tổng khi chuyển vào báo cáo chính thức: (1) chèn hình từ
-`results/figures/` + đánh số bảng/hình theo template của khoa; (2) chốt mục thời
-gian RQ2 theo ý GVHD; (3) đối chiếu thuật ngữ với Chương 2 (khảo sát 15 bài) và
-trích dẫn lại các bài liên quan khi thảo luận (GPTDroid, VisionDroid/Trident,
-survey TSE 2024...).
+⚠️ TODO tổng khi chuyển vào báo cáo chính thức: (1) chèn file hình từ
+`results/figures/` vào đúng vị trí Hình 4.1–4.5 và đánh số lại bảng theo
+template của khoa; (2) mục 4.7-(3): chốt cách định vị "worst-case baseline"
+sau buổi trao đổi GVHD (`docs/gvhd-trao-doi.md` mục 3); (3) khi Chương 2 hoàn
+thiện, thêm trích dẫn chéo tại 4.6 (GPTDroid [2], VETL [3], VisionDroid/Trident
+[4], ITeM [13] cho luận điểm "test theo ý định", NaviQAte [10] cho mức trần
+độ tin cậy agent).
