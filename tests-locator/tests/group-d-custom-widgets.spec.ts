@@ -4,12 +4,12 @@ import { appUrl, gotoProducts, loginAs } from './helpers';
 // Group D — custom components with no semantic labels: icon-only buttons,
 // star-rating widget, canvas chart, clickable div rows, role-based visibility.
 
-const ACTIONS_CELL = 'td:nth-child(8)';
+const ACTIONS_CELL = 'td:nth-child(1)';
 
 test('D1: the view icon opens a read-only product detail', async ({ page }) => {
   await gotoProducts(page);
   // 1st icon (eye glyph) of the 1st row
-  await page.click(`.product-table tbody tr:nth-child(1) ${ACTIONS_CELL} .icon-btn:nth-child(1)`);
+  await page.click(`.product-table tbody tr:nth-child(1) ${ACTIONS_CELL} .icon-btn:nth-child(2)`);
   const modal = page.locator('.modal.product-view');
   await expect(modal.locator('dd:nth-of-type(1)')).toHaveText('Cola Classic 330ml');
   await expect(modal.locator('dd:nth-of-type(2)')).toHaveText('BEV-001');
@@ -30,7 +30,7 @@ test('D2: the star widget sets the rating in the product form', async ({ page })
   await page.click("xpath=//div[contains(@class,'modal-actions')]/button[text()='Save']");
   // rating is the 7th column; all 5 stars of the new row must be filled
   await expect(
-    page.locator('.product-table tbody tr:nth-child(13) td:nth-child(7) .star.filled'),
+    page.locator('.product-table tbody tr:nth-child(13) td:nth-child(8) .star.filled'),
   ).toHaveCount(5);
 });
 
@@ -59,7 +59,7 @@ test('D5: staff role sees no delete icon, no cost column and no Settings link', 
   await expect(page.locator('.product-table thead th')).toHaveCount(7);
   // actions cell (7th column for staff) contains only view + edit icons
   await expect(
-    page.locator('.product-table tbody tr:nth-child(1) td:nth-child(7) .icon-btn'),
+    page.locator('.product-table tbody tr:nth-child(1) td:nth-child(1) .icon-btn'),
   ).toHaveCount(2);
   // no Settings entry in the nav
   await expect(page.locator('.nav-links > a')).toHaveCount(2);
