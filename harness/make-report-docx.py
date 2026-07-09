@@ -54,18 +54,35 @@ def base_styles(doc):
     pf = normal.paragraph_format
     pf.line_spacing = 1.5
     pf.space_after = Pt(6)
-    for name, size in (("Heading 1", 16), ("Heading 2", 14), ("Heading 3", 13)):
+    for name, size, before in (("Heading 1", 16, 18), ("Heading 2", 14, 14), ("Heading 3", 13, 10)):
         st = doc.styles[name]
         st.font.name = "Times New Roman"
         st.font.size = Pt(size)
         st.font.bold = True
         st.font.color.rgb = RGBColor(0, 0, 0)
         st.element.rPr.rFonts.set(qn("w:eastAsia"), "Times New Roman")
+        st.paragraph_format.space_before = Pt(before)
+        st.paragraph_format.space_after = Pt(8)
+        st.paragraph_format.keep_with_next = True
     for sec in doc.sections:
         sec.top_margin = Cm(2)
         sec.bottom_margin = Cm(2)
         sec.left_margin = Cm(3)
         sec.right_margin = Cm(2)
+
+
+def add_page_numbers(doc):
+    footer = doc.sections[0].footer
+    p = footer.paragraphs[0]
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    fld = OxmlElement("w:fldSimple")
+    fld.set(qn("w:instr"), "PAGE")
+    r = OxmlElement("w:r")
+    t = OxmlElement("w:t")
+    t.text = "1"
+    r.append(t)
+    fld.append(r)
+    p._p.append(fld)
 
 
 def add_runs(par, text, base_bold=False):
@@ -128,8 +145,10 @@ def add_table(doc, rows):
     cells = [[c.strip() for c in r.strip().strip("|").split("|")] for r in rows]
     cells = [r for i, r in enumerate(cells) if i != 1]  # drop the |---| separator
     ncols = max(len(r) for r in cells)
+    font_size = Pt(10) if ncols >= 7 else Pt(11.5)
     table = doc.add_table(rows=len(cells), cols=ncols)
     table.style = "Table Grid"
+    table.autofit = True
     for i, row in enumerate(cells):
         for j in range(ncols):
             cell = table.cell(i, j)
@@ -140,7 +159,7 @@ def add_table(doc, rows):
             txt = row[j] if j < len(row) else ""
             add_runs(par, txt, base_bold=(i == 0))
             for run in par.runs:
-                run.font.size = Pt(11.5)
+                run.font.size = font_size
     doc.add_paragraph()
 
 
@@ -162,43 +181,64 @@ def hinh3_images(doc, text):
 
 
 def render_paragraph(doc, text):
+    # Working notes for the drafting process carry no meaning in the deliverable.
+    if text.startswith("Ghi chú khi chuyển vào báo cáo"):
+        return
     if text.startswith("[HÌNH") or text.startswith("[BẢNG"):
         if hinh3_images(doc, text):
             return
         add_note(doc, "⟪Chỗ chèn: " + text.strip("[]") + "⟫")
         return
+    # Figure anchor lines: embed the image + caption, drop the anchor prose
+    # (file names and run labels belong to the repo, not the thesis body).
+    pngs = [png for png in FIG_CAPTIONS if png in text]
+    if pngs:
+        for png in pngs:
+            add_image(doc, os.path.join(FIG, png), Inches(5.9), FIG_CAPTIONS[png])
+        return
     p = doc.add_paragraph()
     add_runs(p, text)
-    for png, caption in FIG_CAPTIONS.items():
-        if png in text:
-            add_image(doc, os.path.join(FIG, png), Inches(5.9), caption)
 
 
 def render_markdown(doc, path):
     lines = open(path, encoding="utf-8").read().splitlines()
     buf, bullets, notes, table, code = [], [], [], [], None
+    body_seen = False  # becomes True after the first non-heading body content
     i = 0
 
     def flush():
-        nonlocal buf, bullets, notes, table
+        nonlocal buf, bullets, notes, table, body_seen
         if buf:
-            render_paragraph(doc, " ".join(buf)); buf = []
+            render_paragraph(doc, " ".join(buf)); buf = []; body_seen = True
         if bullets:
-            for b in bullets:
-                p = doc.add_paragraph(style="List Bullet")
+            for kind, b in bullets:
+                if kind == "num":
+                    p = doc.add_paragraph()
+                    p.paragraph_format.left_indent = Cm(0.63)
+                else:
+                    p = doc.add_paragraph(style="List Bullet")
                 add_runs(p, b)
-            bullets = []
+            bullets = []; body_seen = True
         if notes:
-            add_note(doc, " ".join(notes)); notes = []
+            text = " ".join(notes); notes = []
+            # A quote block before any body content is a drafting note — drop it.
+            # Trailing editorial reminders are equally meaningless in the deliverable.
+            if body_seen and not text.startswith("Ghi chú khi hoàn thiện"):
+                p = doc.add_paragraph()
+                p.paragraph_format.left_indent = Cm(1)
+                add_runs(p, text)
+                for run in p.runs:
+                    run.italic = True
+                body_seen = True
         if table:
-            add_table(doc, table); table = []
+            add_table(doc, table); table = []; body_seen = True
 
     while i < len(lines):
         ln = lines[i]
         s = ln.strip()
         if code is not None:
             if s.startswith("```"):
-                add_code_block(doc, code); code = None
+                add_code_block(doc, code); code = None; body_seen = True
             else:
                 code.append(ln)
             i += 1; continue
@@ -224,13 +264,13 @@ def render_markdown(doc, path):
         elif re.match(r"^[-*]\s+", s):
             if buf or table or notes:
                 flush()
-            bullets.append(re.sub(r"^[-*]\s+", "", s))
+            bullets.append(("bullet", re.sub(r"^[-*]\s+", "", s)))
         elif re.match(r"^\d+\.\s+", s) and not buf:
             if table or notes:
                 flush()
-            bullets.append(s)
+            bullets.append(("num", s))
         elif bullets and ln.startswith(("  ", "\t")):
-            bullets[-1] += " " + s
+            bullets[-1] = (bullets[-1][0], bullets[-1][1] + " " + s)
         else:
             if bullets or table or notes:
                 flush()
@@ -270,12 +310,10 @@ def toc_page(doc):
     fld.set(qn("w:instr"), r'TOC \o "1-3" \h \z \u')
     run = OxmlElement("w:r")
     t = OxmlElement("w:t")
-    t.text = "Nhấp chuột phải vào đây → Update Field để tạo/cập nhật mục lục."
+    t.text = "(Nhấp chuột phải vào đây rồi chọn Update Field để tạo mục lục.)"
     run.append(t)
     fld.append(run)
     p._p.append(fld)
-    add_note(doc, "Ghi chú bản nháp: mục lục là trường TOC tự động — mở file bằng "
-                  "Word/Google Docs rồi cập nhật trường để hiển thị.")
     doc.add_page_break()
 
 
@@ -299,13 +337,13 @@ def abstract_page(doc):
         "để tái lập.",
     ]:
         doc.add_paragraph(para)
-    add_note(doc, "⟪Bản nháp — sinh viên rà và biên tập lại tóm tắt theo giọng văn của mình.⟫")
     doc.add_page_break()
 
 
 def main():
     doc = Document()
     base_styles(doc)
+    add_page_numbers(doc)
     cover_page(doc)
     toc_page(doc)
     abstract_page(doc)

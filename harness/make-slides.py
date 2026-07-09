@@ -160,11 +160,11 @@ tb = box(s, Inches(0.55), Inches(3.15), Inches(6.1), Inches(3.4))
 para(tb.text_frame, "Locator gắn chặt vào cấu trúc DOM và nhãn văn bản.", size=17, first=True)
 para(tb.text_frame, "Giao diện đổi cách trình bày (đảo cột, đổi nhãn nút) — chức năng không đổi — nhưng test gãy hàng loạt.", size=17)
 para(tb.text_frame, "→ Chi phí bảo trì test là gánh nặng thường trực; nặng nhất ở thành phần không có nhãn ngữ nghĩa (icon SVG, canvas, div thuần).", size=17, color=RED)
-picture(s, os.path.join(SHOT, "products-v0.png"), Inches(7.0), Inches(1.5), width=Inches(5.8))
-tb = box(s, Inches(7.0), Inches(4.85), Inches(5.8), Inches(0.4))
+picture(s, os.path.join(SHOT, "products-v0.png"), Inches(6.9), Inches(1.45), width=Inches(3.3))
+tb = box(s, Inches(10.35), Inches(2.4), Inches(2.6), Inches(1.5))
 para(tb.text_frame, "V0 (gốc): cột Actions ở vị trí thứ 8…", size=13, color=GREY, first=True)
-picture(s, os.path.join(SHOT, "products-v2.png"), Inches(7.0), Inches(5.2), width=Inches(4.4))
-tb = box(s, Inches(11.45), Inches(5.9), Inches(1.8), Inches(1.0))
+picture(s, os.path.join(SHOT, "products-v2.png"), Inches(6.9), Inches(4.45), width=Inches(3.3))
+tb = box(s, Inches(10.35), Inches(5.4), Inches(2.6), Inches(1.6))
 para(tb.text_frame, "…V2: Actions nhảy lên cột 1 → selector trỏ sai ô", size=13, color=RED, first=True)
 
 # ------------------------------------------------------- Slide 3: VLM alternative
@@ -244,41 +244,41 @@ bullets(s, [
     ("Model ghim: qwen/qwen3-vl-235b-a22b-instruct (OpenRouter) · temperature = 0 · cache TẮT · phiên bản khóa lockfile.", {"size": 17}),
     ("Hai khối mở rộng: RBAC 8 kịch bản × build sạch/cấy lỗi (RQ3) · grounding benchmark 360 call trên ảnh mask (RQ4).", {"size": 17}),
     ("Mọi số liệu ghi tự động vào CSV; toàn bộ repo + số liệu công khai GitHub.", {"size": 17}),
-], top=Inches(3.35))
+], top=Inches(3.35), height=Inches(3.9))
 
 # ----------------------------------------------------------- Slide 7: variants
 s = add_slide()
 title_bar(s, "4 biến thể giao diện có kiểm soát — chỉ đổi trình bày, không đổi logic")
 labels = [("products-v0.png", "V0 — gốc"), ("products-v1.png", "V1 — dark theme (đổi màu)"),
           ("products-v2.png", "V2 — topbar + đảo cột/icon"), ("products-v3.png", "V3 — đổi icon + nhãn nút")]
-pos = [(0.55, 1.5), (6.95, 1.5), (0.55, 4.35), (6.95, 4.35)]
+pos = [(0.55, 1.3), (6.95, 1.3), (0.55, 4.35), (6.95, 4.35)]
 for (fn, lab), (x, y) in zip(labels, pos):
-    picture(s, os.path.join(SHOT, fn), Inches(x), Inches(y), width=Inches(4.7))
-    tb = box(s, Inches(x + 4.75), Inches(y + 0.9), Inches(1.7), Inches(1.4))
+    picture(s, os.path.join(SHOT, fn), Inches(x), Inches(y), width=Inches(3.2))
+    tb = box(s, Inches(x + 3.3), Inches(y + 0.9), Inches(2.9), Inches(1.4))
     para(tb.text_frame, lab, size=14, bold=True, color=BLUE if "V0" in lab or "V1" in lab else RED, first=True)
-tb = box(s, Inches(0.55), Inches(7.0), Inches(12.2), Inches(0.4))
-para(tb.text_frame, "Cấu hình tập trung 1 file (variants.ts) — phủ 3 nguyên nhân gãy test kinh điển: đổi màu / đổi cấu trúc DOM / đổi nhãn.", size=13, color=GREY, first=True)
+tb = box(s, Inches(0.55), Inches(7.12), Inches(12.2), Inches(0.35))
+para(tb.text_frame, "Cấu hình tập trung 1 file (variants.ts) — phủ 3 nguyên nhân gãy test kinh điển: đổi màu / đổi cấu trúc DOM / đổi nhãn.", size=12, color=GREY, first=True)
 
 # -------------------------------------------------------------- Slide 8: RQ1 ★
 s = add_slide()
 title_bar(s, "RQ1 — Độ bền vững khi giao diện thay đổi", tag="18 test × 5 lặp / biến thể")
-picture(s, os.path.join(FIG, "fig-rq1-passrate.png"), Inches(2.35), Inches(1.35), width=Inches(8.6))
+picture(s, os.path.join(FIG, "fig-rq1-passrate.png"), Inches(2.97), Inches(1.35), width=Inches(7.4))
 big_number(s, "VLM: 18/18 trên CẢ 4 biến thể — Locator: rơi còn 9/18 (V2), 12/18 (V3)",
-           "Flakiness = 0 ở cả hai phương pháp (kết quả giống hệt qua 5 lần lặp, temperature = 0)", top=Inches(6.3))
+           "Flakiness = 0 ở cả hai phương pháp (kết quả giống hệt qua 5 lần lặp, temperature = 0)", top=Inches(6.0))
 
 # ----------------------------------------------------------- Slide 9: time/cost
 s = add_slide()
 title_bar(s, "Giá phải trả: thời gian và chi phí vận hành")
 picture(s, os.path.join(FIG, "fig-rq1-time-cost.png"), Inches(1.7), Inches(1.4), width=Inches(9.9))
 big_number(s, "VLM ~7–10 phút & $0.05/run   —   Locator ~3 giây & $0/run",
-           "Khác biệt thật nằm ở THỜI GIAN, không phải tiền: toàn bộ thực nghiệm hết ≈ $1.5 / ngân sách $50", top=Inches(6.25), color=ORANGE)
+           "Khác biệt thật nằm ở THỜI GIAN, không phải tiền: toàn bộ thực nghiệm hết ≈ $1.5 / ngân sách $50", top=Inches(6.1), color=ORANGE)
 
 # --------------------------------------------------------------- Slide 10: RQ2
 s = add_slide()
 title_bar(s, "RQ2 — Chi phí bảo trì khi nâng cấp giao diện V0 → Vx")
 picture(s, os.path.join(FIG, "fig-rq2-maintenance.png"), Inches(0.85), Inches(1.5), width=Inches(11.6))
 big_number(s, "Locator: 15 test / 46 LOC / 314 giây phục hồi  —  VLM: 0 / 0 / 0",
-           "Quy trình sửa chuẩn hóa tự động, đo 2 lần độc lập: nội dung sửa trùng khớp từng dòng (tái lập được)", top=Inches(6.2))
+           "Quy trình sửa chuẩn hóa tự động, đo 2 lần độc lập: nội dung sửa trùng khớp từng dòng (tái lập được)", top=Inches(6.1))
 
 # --------------------------------------------------------------- Slide 11: RQ3
 s = add_slide()
@@ -291,12 +291,12 @@ big_number(s, "Cả hai phương pháp: phát hiện 5/5 lỗi cấy — 0 báo 
 s = add_slide()
 title_bar(s, "RQ4 — Che PII trước khi gửi VLM API: có mất độ chính xác?")
 picture(s, os.path.join(FIG, "fig-rq4-hitrate-iou.png"), Inches(0.55), Inches(1.45), width=Inches(8.6))
-picture(s, os.path.join(MASK, "orig", "customer-c01.png"), Inches(9.35), Inches(1.45), width=Inches(3.5))
-picture(s, os.path.join(MASK, "masked-pixel", "customer-c01.png"), Inches(9.35), Inches(3.75), width=Inches(3.5))
-tb = box(s, Inches(9.35), Inches(5.95), Inches(3.5), Inches(0.5))
-para(tb.text_frame, "Trang PII: gốc (trên) / pixelate (dưới)", size=12, color=GREY, first=True)
+picture(s, os.path.join(MASK, "orig", "customer-c01.png"), Inches(9.7), Inches(1.35), width=Inches(2.55))
+picture(s, os.path.join(MASK, "masked-pixel", "customer-c01.png"), Inches(9.7), Inches(3.6), width=Inches(2.55))
+tb = box(s, Inches(9.4), Inches(5.82), Inches(3.4), Inches(0.32))
+para(tb.text_frame, "Trang PII: gốc (trên) / pixelate (dưới)", size=11, color=GREY, first=True)
 big_number(s, "Hit-rate 100% ở CẢ 3 điều kiện — IoU chỉ giảm nhẹ tại đúng vùng che",
-           "360 lượt gọi (40 phần tử × 3 điều kiện × 3 lặp), kết quả tất định; màn không mask giữ nguyên (đối chứng)", top=Inches(6.35))
+           "360 lượt gọi (40 phần tử × 3 điều kiện × 3 lặp), kết quả tất định; màn không mask giữ nguyên (đối chứng)", top=Inches(6.15))
 
 # --------------------------------------------------------- Slide 13: trade-off
 s = add_slide()
