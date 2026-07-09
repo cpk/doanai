@@ -64,12 +64,12 @@ Quy trình: sửa tối thiểu bộ locator cho pass lại 18/18 trên từng b
 (`rq2-fix-v2` = commit `bc5f071`, `rq2-fix-v3` = commit `3eb8809`); đo số test
 phải sửa + diff LOC bằng `git diff --stat`.
 
-| Biến thể | Locator: test sửa | Locator: diff LOC (+/−) | VLM: test sửa | VLM: diff LOC |
+| Biến thể | Locator: test sửa | Locator: diff LOC (+/−) | Locator: thời gian phục hồi | VLM: test sửa / LOC / thời gian |
 |---|---:|---:|---:|---:|
-| V1 | 0 | 0 | 0 | 0 |
-| V2 | 9 | 24 (12+/12−) | 0 | 0 |
-| V3 | 6 | 22 (11+/11−) | 0 | 0 |
-| **Tổng** | **15** | **46** | **0** | **0** |
+| V1 | 0 | 0 | 0 s | 0 / 0 / 0 s |
+| V2 | 9 | 24 (12+/12−) | 177 s | 0 / 0 / 0 s |
+| V3 | 6 | 22 (11+/11−) | 137 s | 0 / 0 / 0 s |
+| **Tổng** | **15** | **46** | **314 s (≈5,2 phút)** | **0** |
 
 - Phía VLM, "chi phí bảo trì" khi giao diện đổi là **0** trên cả 3 biến thể —
   nhưng bản chất kinh tế của hai phương pháp khác nhau: locator trả chi phí
@@ -77,11 +77,13 @@ phải sửa + diff LOC bằng `git diff --stat`.
   chạy** ($0.050/run + 7–10 phút). Điểm hòa vốn phụ thuộc tần suất đổi giao diện
   so với tần suất chạy CI. ⚠️ TODO: có thể thêm 1 đoạn ước lượng break-even
   minh họa (ví dụ: 46 LOC ≈ X phút công so với N run × $0.05).
-- Chỉ số **thời gian phục hồi bộ test**: theo đề cương (bản cập nhật 09/07/2026),
-  việc bảo trì do cùng một quy trình chuẩn hóa tự động thực hiện (AI coding agent,
-  chỉ dẫn sửa-tối-thiểu cố định) nên thời gian đo được là thời gian phục hồi của
-  quy trình đó — tái lập được, không phụ thuộc người sửa. ⚠️ TODO: đo trên branch
-  `rq2-agent-v2`/`rq2-agent-v3` rồi điền số vào đây (VLM = 0 phút, không phải sửa).
+- Chỉ số **thời gian phục hồi bộ test**: theo đề cương, việc bảo trì do cùng một
+  quy trình chuẩn hóa tự động thực hiện (AI coding agent, chỉ dẫn sửa-tối-thiểu cố
+  định) nên thời gian đo được là thời gian phục hồi của quy trình đó — tái lập
+  được, không phụ thuộc người sửa. Kết quả (branch `rq2-agent-v2`/`rq2-agent-v3`,
+  đo từ lúc bắt đầu chạy suite lần đầu đến lần chạy xác nhận 18/18): V2 = 177 s,
+  V3 = 137 s; phía VLM = 0 s (không phải sửa). Kiểm tra ổn định: hai lần chạy agent
+  độc lập cho diff trùng khớp từng dòng với lần đo trước (`rq2-fix-v2/v3`).
 
 **Trả lời RQ2:** trên 3 biến thể có kiểm soát, bộ locator cần sửa 15 lượt test /
 46 LOC để phục hồi, bộ VLM cần 0; chi phí của VLM dịch chuyển từ "bảo trì" sang

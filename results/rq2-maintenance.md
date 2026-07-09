@@ -21,19 +21,22 @@
 
 ## 2. Kết quả
 
-| Biến thể | Thay đổi giao diện | Bộ test | Test hỏng | Test phải sửa | Diff LOC (+/−) | File phải sửa |
-|---|---|---|---:|---:|---:|---:|
-| V1 | Dark theme (đổi màu) | Locator | 0/18 | 0 | 0 | 0 |
-| V1 | | VLM | 0/18 | 0 | 0 | 0 |
-| V2 | Topbar + đảo cột/toolbar/icon | Locator | **9/18** | **9** | **24 (12+/12−)** | 4 |
-| V2 | | VLM | 0/18 | 0 | 0 | 0 |
-| V3 | Đổi icon + nhãn nút/placeholder | Locator | **6/18** | **6** | **22 (11+/11−)** | 3 |
-| V3 | | VLM | 0/18 | 0 | 0 | 0 |
-| **Tổng V1–V3** | | **Locator** | **15** | **15** | **46 (23+/23−)** | — |
-| **Tổng V1–V3** | | **VLM** | **0** | **0** | **0** | — |
+| Biến thể | Thay đổi giao diện | Bộ test | Test hỏng | Test phải sửa | Diff LOC (+/−) | File phải sửa | Thời gian phục hồi |
+|---|---|---|---:|---:|---:|---:|---:|
+| V1 | Dark theme (đổi màu) | Locator | 0/18 | 0 | 0 | 0 | 0 s |
+| V1 | | VLM | 0/18 | 0 | 0 | 0 | 0 s |
+| V2 | Topbar + đảo cột/toolbar/icon | Locator | **9/18** | **9** | **24 (12+/12−)** | 4 | **177 s** |
+| V2 | | VLM | 0/18 | 0 | 0 | 0 | 0 s |
+| V3 | Đổi icon + nhãn nút/placeholder | Locator | **6/18** | **6** | **22 (11+/11−)** | 3 | **137 s** |
+| V3 | | VLM | 0/18 | 0 | 0 | 0 | 0 s |
+| **Tổng V1–V3** | | **Locator** | **15** | **15** | **46 (23+/23−)** | — | **314 s (≈5,2 phút)** |
+| **Tổng V1–V3** | | **VLM** | **0** | **0** | **0** | — | **0 s** |
 
 Ghi chú cách đếm: "Diff LOC" = tổng dòng thêm + dòng xóa theo `git diff`; vì mọi sửa đổi là
 thay-thế-tại-chỗ một dòng nên 12+/12− tương ứng 12 dòng bị sửa (V2), 11 dòng (V3).
+"Thời gian phục hồi" = wall-clock của quy trình sửa chuẩn hóa tự động, đo T0→T2 theo
+giao thức ở mục 4 (gồm cả 2 lần chạy suite: lần đầu lấy danh sách fail + lần cuối xác
+nhận 18/18); chi tiết mốc thời gian ở mục 4.
 
 ### Chi tiết V2 (9 test sửa — gãy do đảo vị trí cấu trúc)
 
@@ -88,8 +91,18 @@ refactor"), áp dụng đồng nhất cho cả hai bộ test; chỉ số **thờ
 tác nhân chuẩn hóa phục hồi bộ test (đo bằng máy, tái lập được). Hạn chế — thời gian
 agent không đại diện công sức sửa thủ công của kỹ sư — ghi trong Threats to Validity.
 
-Việc còn lại: **đo thời gian phục hồi của agent** trong điều kiện chuẩn (branch mới
-`rq2-agent-v2`/`rq2-agent-v3`, ghi wall-clock từ lúc nhận danh sách test fail đến khi
-18/18), điền vào bảng mục 2; đối chiếu nội dung sửa với `rq2-fix-v2`/`rq2-fix-v3` để
-kiểm tra tính ổn định của quy trình. Trình bày thiết kế này với GVHD theo
-`docs/gvhd-trao-doi.md` mục 1 (kèm phương án dự phòng nếu GVHD muốn số liệu người thật).
+**Kết quả đo (09/07/2026).** Giao thức: agent mới, không có ngữ cảnh về các lần sửa
+trước, bị cấm đọc `results/`, `docs/` và các branch `rq2-*` khác — chỉ chẩn đoán từ
+output test và mã nguồn app. Mốc thời gian: T0 = bắt đầu (trước lần chạy suite đầu),
+T1 = có danh sách test fail, T2 = ngay sau lần chạy xác nhận 18/18.
+
+| Biến thể | Branch (commit) | T0→T2 (tổng phục hồi) | T1→T2 (riêng chẩn đoán + sửa) | Số lần chạy suite |
+|---|---|---:|---:|---:|
+| V2 | `rq2-agent-v2` (`146ca3b`) | **177 s** | 112 s | 2 |
+| V3 | `rq2-agent-v3` (`6d62fe3`) | **137 s** | 54 s | 2 |
+
+Kiểm tra tính ổn định của quy trình: diff của cả hai lần chạy agent độc lập **trùng
+khớp hoàn toàn** với lần đo đầu (`rq2-fix-v2`/`rq2-fix-v3`) — cùng 9/6 test, cùng
+24/22 LOC, cùng nội dung từng dòng sửa → quy trình chuẩn hóa cho kết quả tái lập được.
+Trình bày thiết kế này với GVHD theo `docs/gvhd-trao-doi.md` mục 1 (kèm phương án
+dự phòng nếu GVHD muốn số liệu người thật).

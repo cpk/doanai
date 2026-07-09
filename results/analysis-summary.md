@@ -28,14 +28,14 @@ Locator trên V2/V3 chậm hơn V0/V1 (~32 s so với ~3 s) vì các test hỏng
 
 ## RQ2 — Chi phí bảo trì (chi tiết: `results/rq2-maintenance.md`)
 
-| Biến thể | Locator: test sửa | Locator: diff LOC | VLM: test sửa | VLM: diff LOC |
+| Biến thể | Locator: test sửa | Locator: diff LOC | Locator: thời gian phục hồi | VLM: test sửa / LOC / thời gian |
 |---|---|---|---|---|
-| V1 | 0 | 0 | 0 | 0 |
-| V2 | 9 | 24 | 0 | 0 |
-| V3 | 6 | 22 | 0 | 0 |
-| **Tổng** | **15** | **46** | **0** | **0** |
+| V1 | 0 | 0 | 0 s | 0 / 0 / 0 s |
+| V2 | 9 | 24 | 177 s | 0 / 0 / 0 s |
+| V3 | 6 | 22 | 137 s | 0 / 0 / 0 s |
+| **Tổng** | **15** | **46** | **314 s** | **0** |
 
-Thời gian sửa: chưa đo (chờ chốt phương án với GVHD — `results/rq2-maintenance.md` mục 4).
+Thời gian phục hồi = wall-clock của quy trình sửa chuẩn hóa tự động (AI agent, chỉ dẫn sửa-tối-thiểu cố định) trên branch `rq2-agent-v2/v3`, đo từ lúc bắt đầu chạy suite lần đầu đến lần chạy xác nhận 18/18.
 
 ## RQ3 — Phát hiện lỗi phân quyền hiển thị (5 lặp / build / phương pháp)
 

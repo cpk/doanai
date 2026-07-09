@@ -43,10 +43,11 @@ VARIANT_LABELS = {
 METHOD_LABELS = {"locator": "Locator (Playwright)", "vlm": "VLM (Midscene + Qwen3-VL)"}
 COLORS = {"locator": "#4472c4", "vlm": "#ed7d31"}
 
-# RQ2 constants measured on branches rq2-fix-v2/rq2-fix-v3 (results/rq2-maintenance.md)
+# RQ2 constants measured on branches rq2-fix-v2/v3 (tests, LOC) and rq2-agent-v2/v3
+# (restore time in seconds, T0->T2) — see results/rq2-maintenance.md sections 2 and 4.
 RQ2 = {
-    "locator": {"v1": (0, 0), "v2": (9, 24), "v3": (6, 22)},  # (tests fixed, diff LOC +/-)
-    "vlm": {"v1": (0, 0), "v2": (0, 0), "v3": (0, 0)},
+    "locator": {"v1": (0, 0, 0.0), "v2": (9, 24, 177.3), "v3": (6, 22, 137.1)},
+    "vlm": {"v1": (0, 0, 0.0), "v2": (0, 0, 0.0), "v3": (0, 0, 0.0)},
 }
 
 
@@ -152,15 +153,18 @@ def fig_rq1_time_cost(stats):
 def fig_rq2():
     variants = ["v1", "v2", "v3"]
     labels = [VARIANT_LABELS[v].replace("\n", " ") for v in variants]
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 4.0))
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(13, 4.0))
     x = range(len(variants))
     width = 0.38
     for i, m in enumerate(("locator", "vlm")):
         tests = [RQ2[m][v][0] for v in variants]
         locs = [RQ2[m][v][1] for v in variants]
+        secs = [RQ2[m][v][2] for v in variants]
         b1 = ax1.bar([xi + (i - 0.5) * width for xi in x], tests, width,
                      label=METHOD_LABELS[m], color=COLORS[m])
         b2 = ax2.bar([xi + (i - 0.5) * width for xi in x], locs, width,
+                     label=METHOD_LABELS[m], color=COLORS[m])
+        b3 = ax3.bar([xi + (i - 0.5) * width for xi in x], secs, width,
                      label=METHOD_LABELS[m], color=COLORS[m])
         for b, val in list(zip(b1, tests)):
             ax1.annotate(str(val), (b.get_x() + b.get_width() / 2, val),
@@ -168,17 +172,22 @@ def fig_rq2():
         for b, val in list(zip(b2, locs)):
             ax2.annotate(str(val), (b.get_x() + b.get_width() / 2, val),
                          ha="center", va="bottom", fontsize=9)
+        for b, val in list(zip(b3, secs)):
+            ax3.annotate(f"{val:.0f}", (b.get_x() + b.get_width() / 2, val),
+                         ha="center", va="bottom", fontsize=9)
     for ax, title, ylab, ymax in (
         (ax1, "Số test phải sửa (trên 18)", "số test", 11),
         (ax2, "Diff LOC (dòng thêm + dòng xóa)", "LOC", 30),
+        (ax3, "Thời gian phục hồi suite (giây)\nquy trình sửa chuẩn hóa tự động", "giây", 210),
     ):
         ax.set_xticks(list(x))
         ax.set_xticklabels(labels, fontsize=8)
         ax.set_ylabel(ylab)
-        ax.set_title(title)
+        ax.set_title(title, fontsize=10)
         ax.set_ylim(0, ymax)
         ax.grid(axis="y", alpha=0.3)
         ax.legend(fontsize=8)
+    ax3.legend(fontsize=8, loc="upper left")
     fig.suptitle("RQ2 — Chi phí bảo trì khi nâng cấp giao diện V0 → Vx", y=1.0)
     fig.tight_layout()
     fig.savefig(os.path.join(FIG_DIR, "fig-rq2-maintenance.png"), dpi=200)
@@ -305,14 +314,18 @@ def write_summary(s1, s3, per4):
                  "phải chờ hết timeout 5 s của từng assertion.\n")
 
     lines.append("## RQ2 — Chi phí bảo trì (chi tiết: `results/rq2-maintenance.md`)\n")
-    lines.append("| Biến thể | Locator: test sửa | Locator: diff LOC | VLM: test sửa | VLM: diff LOC |")
+    lines.append("| Biến thể | Locator: test sửa | Locator: diff LOC | "
+                 "Locator: thời gian phục hồi | VLM: test sửa / LOC / thời gian |")
     lines.append("|---|---|---|---|---|")
+    total_secs = 0.0
     for v in ("v1", "v2", "v3"):
-        lt, ll = RQ2["locator"][v]
-        lines.append(f"| {v.upper()} | {lt} | {ll} | 0 | 0 |")
-    lines.append("| **Tổng** | **15** | **46** | **0** | **0** |")
-    lines.append("\nThời gian sửa: chưa đo (chờ chốt phương án với GVHD — "
-                 "`results/rq2-maintenance.md` mục 4).\n")
+        lt, ll, ls = RQ2["locator"][v]
+        total_secs += ls
+        lines.append(f"| {v.upper()} | {lt} | {ll} | {ls:.0f} s | 0 / 0 / 0 s |")
+    lines.append(f"| **Tổng** | **15** | **46** | **{total_secs:.0f} s** | **0** |")
+    lines.append("\nThời gian phục hồi = wall-clock của quy trình sửa chuẩn hóa tự động "
+                 "(AI agent, chỉ dẫn sửa-tối-thiểu cố định) trên branch `rq2-agent-v2/v3`, "
+                 "đo từ lúc bắt đầu chạy suite lần đầu đến lần chạy xác nhận 18/18.\n")
 
     lines.append("## RQ3 — Phát hiện lỗi phân quyền hiển thị (5 lặp / build / phương pháp)\n")
     lines.append("| Phương pháp | Detection (R1–R5 fail trên build cấy lỗi) | "
