@@ -16,6 +16,8 @@
 
 ## 2. Việc tiếp theo (theo thứ tự) — bắt đầu từ đây
 
+> **Cập nhật 09/07 (máy Mac):** mục 2.1 bước 1 ✔ (V2 = 9 test/24 LOC trên `rq2-fix-v2`, V3 = 6 test/22 LOC trên `rq2-fix-v3` — xem `results/rq2-maintenance.md`), mục 2.2 ✔ (`harness/make-figures.py` → `results/figures/` + `results/analysis-summary.md`), mục 2.3 ✔ (`docs/chuong4-draft.md`). Chỉ còn: chốt cách đo thời gian RQ2 với GVHD (mục 2.1 bước 2) rồi cập nhật tài liệu. Nội dung dưới đây giữ lại làm bối cảnh.
+
 Phần chạy tự động GĐ3+GĐ4 đã xong hết (RQ1/RQ3/RQ4 — số liệu ở mục 1). Còn lại của GĐ4:
 
 ### 2.1. RQ2 — maintenance cost (việc chính còn lại; phương án lai đã phân tích 09/07)
