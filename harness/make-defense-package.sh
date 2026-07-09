@@ -15,7 +15,7 @@ DEST="${1:-$HOME/Desktop/doanai-bao-ve}"
 # user-added content (recorded demo video, an unpacked+installed doanai-src,
 # a filled-in .env). Legacy layout leftovers are removed too.
 rm -rf "$DEST/01-bao-cao" "$DEST/02-slide" "$DEST/03-so-lieu-hinh" "$DEST/04-phan-bien"
-rm -f "$DEST/HUONG-DAN.md" \
+rm -f "$DEST/HUONG-DAN.md" "$DEST/HUONG-DAN.html" \
       "$DEST"/0[45]-demo-offline/vlm-suite-report.html \
       "$DEST"/0[45]-demo-offline/vlm-test-A3-report.html \
       "$DEST"/0[45]-demo-offline/README.md \
@@ -54,6 +54,9 @@ cp "$SINGLE" "$DEST/04-demo-offline/vlm-test-A3-report.html"
 
 # 05 — source snapshot (no node_modules; offline install fallback)
 git -C "$ROOT" archive --format=zip -o "$DEST/05-ma-nguon/doanai-src.zip" HEAD
+
+# Root guide for outsiders: folder meanings + full setup/demo walkthrough.
+cp "$ROOT/docs/bao-cao/goi-bao-ve-huong-dan.html" "$DEST/HUONG-DAN.html"
 
 # The deliverables must not carry the repo owner's GitHub account name.
 python3 "$ROOT/harness/scrub-defense-package.py" "$DEST"
