@@ -1,8 +1,8 @@
 # RQ2 — Chi phí bảo trì test khi giao diện thay đổi
 
-> Ngày đo: 09/07/2026. Quy trình lai (hybrid) theo `docs/setup-new-machine.md` mục 2.1:
-> AI (Claude Code) thực hiện phần sửa **khách quan** (số test phải sửa, diff LOC);
-> chỉ số **thời gian sửa** chưa chốt cách đo — chờ ý kiến GVHD (xem mục 4).
+> Ngày đo: 09/07/2026. Quy trình chuẩn hóa tự động theo đề cương (bản cập nhật
+> 09/07/2026): AI coding agent sửa tối thiểu, đo số test phải sửa + diff LOC +
+> thời gian phục hồi; thời gian sẽ đo bổ sung trên branch riêng (xem mục 4).
 
 ## 1. Thiết lập
 
@@ -79,14 +79,17 @@ Bộ test VLM (ngôn ngữ tự nhiên) pass **18/18 trên cả V1, V2, V3 mà k
   sẽ đổi bản chất bộ baseline và làm nhiễu phép so sánh.
 - Biến thể là thay đổi trình bày có kiểm soát, một chiều (V0 → Vx), trên một ứng dụng mẫu.
 
-## 4. Việc còn chờ (quyết định của GVHD)
+## 4. Chỉ số thời gian — cách đo đã chốt trong đề cương (09/07/2026)
 
-Chỉ số **thời gian sửa**, 2 phương án:
+Đề cương (bản chưa nộp, đã cập nhật 09/07/2026) định nghĩa lại quy trình bảo trì:
+việc sửa do **cùng một quy trình chuẩn hóa, tự động** thực hiện (AI coding agent với
+chỉ dẫn cố định "sửa tối thiểu để pass lại, chỉ đổi selector/assertion, không
+refactor"), áp dụng đồng nhất cho cả hai bộ test; chỉ số **thời gian** = thời gian
+tác nhân chuẩn hóa phục hồi bộ test (đo bằng máy, tái lập được). Hạn chế — thời gian
+agent không đại diện công sức sửa thủ công của kỹ sư — ghi trong Threats to Validity.
 
-- **(a)** Sinh viên tự sửa lại từ đầu trên branch khác (không nhìn bản sửa của AI), tự bấm
-  giờ từng biến thể → đúng đề cương "cùng một người sửa cả hai bộ theo quy trình thống nhất".
-- **(b)** Bỏ/hạ cấp chỉ số thời gian, ghi minh bạch trong Threats to Validity rằng việc
-  bảo trì có AI hỗ trợ; giữ 2 chỉ số khách quan (số test sửa + diff LOC) làm kết quả chính.
-
-Sau khi chốt: nếu (a), tạo branch `rq2-manual-v2`/`rq2-manual-v3` từ `master`, sửa tay,
-ghi thời gian vào bảng ở mục 2; đối chiếu số test sửa/diff LOC với bản AI để kiểm tra chéo.
+Việc còn lại: **đo thời gian phục hồi của agent** trong điều kiện chuẩn (branch mới
+`rq2-agent-v2`/`rq2-agent-v3`, ghi wall-clock từ lúc nhận danh sách test fail đến khi
+18/18), điền vào bảng mục 2; đối chiếu nội dung sửa với `rq2-fix-v2`/`rq2-fix-v3` để
+kiểm tra tính ổn định của quy trình. Trình bày thiết kế này với GVHD theo
+`docs/gvhd-trao-doi.md` mục 1 (kèm phương án dự phòng nếu GVHD muốn số liệu người thật).

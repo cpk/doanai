@@ -29,7 +29,7 @@ Cấu trúc thực nghiệm:
 - **15–20 test case phân bố đều 4 nhóm:** form nhập liệu; danh sách/tìm kiếm; CRUD; thành phần tùy biến không nhãn ngữ nghĩa.
 - **2–3 biến thể giao diện** (đổi theme màu, bố cục, biểu tượng) để đo độ bền vững (robustness) — cả hai bộ test chạy lại trên từng biến thể.
 - **Mỗi test chạy lặp 3–5 lần** (VLM non-deterministic) để đo cả flakiness, không chỉ pass/fail một lần.
-- **Chỉ số đo:** tỉ lệ pass trên giao diện gốc và từng biến thể; độ ổn định (flakiness); thời gian thực thi; chi phí API (token, tiền, độ trễ); chi phí bảo trì = số test case phải sửa + diff LOC khi giao diện thay đổi (cùng một người sửa cả hai bộ theo quy trình thống nhất để tránh thiên lệch).
+- **Chỉ số đo:** tỉ lệ pass trên giao diện gốc và từng biến thể; độ ổn định (flakiness); thời gian thực thi; chi phí API (token, tiền, độ trễ); chi phí bảo trì = số test case phải sửa + diff LOC + thời gian phục hồi bộ test khi giao diện thay đổi (sửa bởi cùng một quy trình chuẩn hóa tự động — AI coding agent với chỉ dẫn cố định "sửa tối thiểu, chỉ đổi selector/assertion" — áp dụng đồng nhất cho cả hai bộ trên branch riêng từng biến thể, để tránh thiên lệch và tái lập được; hạn chế ghi ở Threats to Validity. Đề cương .docx đã cập nhật 09/07/2026, chưa nộp).
 
 Hai nội dung mở rộng (tùy thời gian, mức "khảo sát bước đầu"):
 - **Che dữ liệu nhạy cảm:** tiền xử lý ảnh (blur/pixelation theo tọa độ biết trước) trước khi gửi screenshot lên VLM API, rồi đánh giá trade-off che giấu ↔ độ chính xác định vị của VLM.

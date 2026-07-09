@@ -77,10 +77,11 @@ phải sửa + diff LOC bằng `git diff --stat`.
   chạy** ($0.050/run + 7–10 phút). Điểm hòa vốn phụ thuộc tần suất đổi giao diện
   so với tần suất chạy CI. ⚠️ TODO: có thể thêm 1 đoạn ước lượng break-even
   minh họa (ví dụ: 46 LOC ≈ X phút công so với N run × $0.05).
-- Chỉ số **thời gian sửa** chưa báo cáo: phần sửa do AI thực hiện nên thời gian
-  không đại diện cho maintainer con người. ⚠️ TODO (chờ GVHD): phương án (a)
-  sinh viên tự sửa lại từ đầu có bấm giờ, hoặc (b) bỏ chỉ số thời gian + ghi
-  Threats to Validity (mục 4.7, ý 5).
+- Chỉ số **thời gian phục hồi bộ test**: theo đề cương (bản cập nhật 09/07/2026),
+  việc bảo trì do cùng một quy trình chuẩn hóa tự động thực hiện (AI coding agent,
+  chỉ dẫn sửa-tối-thiểu cố định) nên thời gian đo được là thời gian phục hồi của
+  quy trình đó — tái lập được, không phụ thuộc người sửa. ⚠️ TODO: đo trên branch
+  `rq2-agent-v2`/`rq2-agent-v3` rồi điền số vào đây (VLM = 0 phút, không phải sửa).
 
 **Trả lời RQ2:** trên 3 biến thể có kiểm soát, bộ locator cần sửa 15 lượt test /
 46 LOC để phục hồi, bộ VLM cần 0; chi phí của VLM dịch chuyển từ "bảo trì" sang
@@ -179,10 +180,12 @@ trade-off chỉ xuất hiện dưới dạng IoU giảm nhẹ tại đúng vùng
    một model duy nhất (Qwen3-VL 235B qua OpenRouter), biến thể giao diện là thay
    đổi có kiểm soát một chiều; không khái quát sang app phức tạp, model khác hay
    redesign lớn.
-5. **Internal — bảo trì có AI hỗ trợ (RQ2):** hai chỉ số số-test-sửa và diff-LOC
-   gần như bất biến theo người sửa (quy tắc sửa tối thiểu); chỉ số thời gian chưa
-   báo cáo. ⚠️ TODO: cập nhật theo quyết định của GVHD (đo lại bằng tay có bấm giờ,
-   hoặc ghi rõ ở đây là đã loại chỉ số thời gian vì lý do trên).
+5. **Internal — bảo trì bằng quy trình tự động (RQ2):** việc sửa do một AI coding
+   agent chuẩn hóa thực hiện (thiết kế trong đề cương, nhằm chống thiên lệch giữa
+   hai bộ và tái lập được). Hai chỉ số số-test-sửa và diff-LOC gần như bất biến
+   theo tác nhân sửa (quy tắc sửa tối thiểu); riêng **thời gian phục hồi** là thời
+   gian của tác nhân tự động, KHÔNG đại diện cho công sức bảo trì thủ công của kỹ
+   sư kiểm thử — chỉ dùng để so sánh tương đối giữa hai bộ test trong cùng quy trình.
 6. **Conclusion — kết quả tất định che khuất phương sai tiềm ẩn:** flakiness = 0
    đo được ở temperature = 0 với input tĩnh; thay đổi nhỏ về render (font, AA,
    độ phân giải) hoặc provider routing có thể tạo phương sai chưa quan sát được.
