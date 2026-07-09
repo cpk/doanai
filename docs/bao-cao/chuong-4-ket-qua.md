@@ -4,7 +4,8 @@
 > tái lập được: bảng tổng hợp `results/analysis-summary.md` và 5 hình
 > `results/figures/` do `harness/make-figures.py` sinh từ
 > `results/raw/matrix-runs.csv` + `masking/generated/grounding-results.csv`.
-> Chỗ đánh dấu ⚠️ TODO cần bổ sung/quyết định trước khi đưa vào báo cáo chính thức.
+> Nội dung đã chốt đầy đủ (09/07/2026) — không còn TODO; chỉ còn việc định dạng
+> theo template khoa khi ghép bản nộp (ghi chú cuối chương).
 
 ## 4.1. Thiết lập thực nghiệm
 
@@ -183,11 +184,19 @@ trade-off chỉ xuất hiện dưới dạng IoU giảm nhẹ tại đúng vùng
    harness chấm sai chuẩn tọa độ 0–1000 của Qwen (tư liệu:
    `grounding-results-invalid-attempt1.csv`); kết quả công bố dùng parser đã sửa
    và lưu raw answer để audit.
-3. **Internal — baseline chủ ý dùng selector giòn:** suite locator dùng
-   nth-child/XPath-text cố định, đại diện cho lớp test giòn phổ biến; một baseline
-   dùng best practice (`getByRole`, `data-testid`) sẽ bền hơn trước V2/V3 — kết quả
-   RQ1/RQ2 phải đọc trong phạm vi lớp selector này. ⚠️ TODO: cân nhắc 1 đoạn
-   định vị rõ "worst-case baseline" hay bổ sung biến thể baseline bền (nếu còn giờ).
+3. **Internal — baseline là "trường hợp xấu" (worst case) có chủ ý:** suite
+   locator dùng selector cấu trúc (nth-child) và neo văn bản (XPath text) cố
+   định — đại diện cho lớp test giòn phổ biến trong thực tế, và là cận dưới về
+   độ bền vững của phương pháp locator. Một baseline theo best practice
+   (`getByRole`, `data-testid`) sẽ bền hơn trước V3 (đổi nhãn) và một phần V2;
+   tuy nhiên (i) `data-testid` đòi quyền sửa mã ứng dụng — không phải lúc nào
+   cũng có trong kiểm thử thực tế, và (ii) nhóm test D nhắm vào các thành phần
+   không có nhãn ngữ nghĩa (icon SVG trần, canvas, div thuần) — nơi selector
+   cấu trúc gần như là lựa chọn duy nhất và best practice không thay đổi được
+   kết cục. Vì vậy kết quả RQ1/RQ2 phải được đọc trong phạm vi lớp selector
+   này: khoảng cách so với VLM là khoảng cách với cận dưới của locator, không
+   phải với mọi bộ test locator. Việc bổ sung một baseline best-practice làm
+   "cận trên" được ghi ở hướng phát triển (mục 5.4).
 4. **External — một ứng dụng, một model:** app mẫu nhỏ (12 dòng dữ liệu, mock),
    một model duy nhất (Qwen3-VL 235B qua OpenRouter), biến thể giao diện là thay
    đổi có kiểm soát một chiều; không khái quát sang app phức tạp, model khác hay
@@ -204,10 +213,8 @@ trade-off chỉ xuất hiện dưới dạng IoU giảm nhẹ tại đúng vùng
 
 ---
 
-⚠️ TODO tổng khi chuyển vào báo cáo chính thức: (1) chèn file hình từ
-`results/figures/` vào đúng vị trí Hình 4.1–4.5 và đánh số lại bảng theo
-template của khoa; (2) mục 4.7-(3): chốt cách định vị "worst-case baseline"
-sau buổi trao đổi GVHD (`docs/gvhd-trao-doi.md` mục 3); (3) khi Chương 2 hoàn
-thiện, thêm trích dẫn chéo tại 4.6 (GPTDroid [2], VETL [3], VisionDroid/Trident
-[4], ITeM [13] cho luận điểm "test theo ý định", NaviQAte [10] cho mức trần
-độ tin cậy agent).
+Ghi chú khi chuyển vào báo cáo chính thức: (1) đánh số lại hình/bảng theo
+template của khoa (bản DOCX sinh tự động đã nhúng đủ hình); (2) khi rà Chương 2
+lần cuối, thêm trích dẫn chéo tại 4.6 (GPTDroid [2], VETL [3],
+VisionDroid/Trident [4], ITeM [13] cho luận điểm "test theo ý định",
+NaviQAte [10] cho mức trần độ tin cậy agent).

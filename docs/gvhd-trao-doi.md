@@ -39,13 +39,17 @@ thực nghiệm, có fallback open-weight chạy cục bộ đúng như dự ph�
 cương). Chi phí thực tế rất thấp: toàn bộ thực nghiệm đến nay ≈ $1.5 trên ngân sách $50."
 Chi tiết: `docs/pilot-model-cost.md` mục 1 + 6.
 
-## 3. Định vị baseline locator trong báo cáo (TODO mục 4.7 nháp Chương 4)
+## 3. Định vị baseline locator trong báo cáo (đã chốt 09/07 — chỉ thông báo)
 
-**Hỏi thầy:** suite locator chủ ý dùng selector giòn (nth-child, XPath neo text) để đại
-diện cho lớp test giòn phổ biến — trong báo cáo em định ghi rõ đây là "worst-case
-baseline" trong Threats to Validity. Thầy thấy vậy đủ chưa, hay muốn em bổ sung thêm
-một baseline thứ hai dùng best practice (`getByRole`/`data-testid`) để so sánh?
-(Việc bổ sung tốn thêm thời gian — chỉ làm nếu thầy yêu cầu và còn quỹ thời gian.)
+**Trình bày (thông báo, không phải xin ý kiến):** suite locator chủ ý dùng selector
+giòn (nth-child, XPath neo text) — báo cáo định vị rõ đây là **"worst-case baseline"
+(cận dưới của phương pháp locator)** trong Threats to Validity (mục 4.7-(3)), với hai
+lập luận: `data-testid` đòi quyền sửa app, và nhóm test D (icon SVG trần, canvas, div
+thuần) không có lựa chọn nào ngoài selector cấu trúc — best practice không đổi được
+kết cục. Việc bổ sung baseline best-practice làm "cận trên" đã ghi ở hướng phát triển
+(mục 5.4). **Nếu thầy muốn có baseline thứ hai ngay trong đồ án**, phương án làm đã
+sẵn (viết 18 test `getByRole`, chạy lại ma trận — tự động hóa được), chỉ cần thầy
+yêu cầu và còn quỹ thời gian.
 
 ## 4. Mức độ đi sâu phần bảo mật (quyết định mở duy nhất còn lại của đề cương)
 
@@ -68,6 +72,6 @@ hay cần mở rộng thêm (ví dụ: nhiều mức độ mask, thêm loại l�
 |---|---|
 | Thầy OK mục 1 | Đo thời gian phục hồi của agent trên branch mới (`rq2-agent-v2/v3`), điền vào `results/rq2-maintenance.md` + Chương 4 mục 4.3/4.7 + panel thời gian vào `fig-rq2-maintenance.png` → GĐ4 xong |
 | Thầy muốn người thật đo | Làm phương án (a): branch `rq2-manual-v2/v3`, sinh viên sửa + bấm giờ theo hướng dẫn đã có |
-| Mục 3: ghi Threats là đủ | Xóa TODO 4.7-(3), chốt câu chữ "worst-case baseline" |
-| Mục 3: thêm baseline bền | Lên kế hoạch suite `tests-locator-robust/` (chỉ khi còn quỹ thời gian) |
+| Mục 3: thầy đồng ý cách định vị (mặc định) | Không làm gì — câu chữ đã khóa trong 4.7-(3) |
+| Mục 3: thầy muốn thêm baseline bền | Xây suite `tests-locator-robust/` + chạy ma trận (Claude làm tự động) |
 | Mục 4: mức hiện tại đủ | Không làm gì thêm, chuyển GĐ5 |

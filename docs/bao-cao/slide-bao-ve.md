@@ -138,5 +138,6 @@
   report HTML của Midscene (có screenshot từng bước) — chuẩn bị trước ngày bảo vệ.
 - Mọi hình lấy từ `results/figures/` (đã 200 dpi); screenshot app từ
   `results/screenshots-app-v1/` và `masking/screens/`.
-- Sau buổi gặp GVHD: cập nhật slide 15 nếu chốt thêm baseline best-practice
-  (TODO 4.7-(3)).
+- Định vị baseline đã chốt 09/07 ("worst-case", slide dự phòng B5 khớp mục
+  4.7-(3)); chỉ cập nhật slide 15 nếu sau buổi gặp GVHD yêu cầu thêm baseline
+  best-practice.
